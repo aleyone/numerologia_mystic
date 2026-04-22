@@ -469,7 +469,7 @@ function calcular() {
   const banner = document.getElementById('master-banner');
   const bannerText = document.getElementById('master-banner-text');
   if (maestrosPresentes.length > 0) {
-    bannerText.textContent = '✦ Número' + (maestrosPresentes.length > 1 ? 's' : '') + ' maestro' + (maestrosPresentes.length > 1 ? 's' : '') + ' detectado' + (maestrosPresentes.length > 1 ? 's' : '') + ': ' + maestrosPresentes.join(' · ') + ' — vibración elevada en tu pináculo.';
+    bannerText.textContent = '✦ Número' + (maestrosPresentes.length > 1 ? 's maestros: ' : ' maestro: ') + maestrosPresentes.join(' · ');
     banner.classList.add('visible');
   } else {
     banner.classList.remove('visible');
