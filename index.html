@@ -6,464 +6,103 @@
 <title>Numerología · David Gil</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #C9A84C; --gold-light: #F0D898; --gold-pale: #FDF7E8;
+  --deep: #1A1630; --deep-mid: #2E2850; --indigo: #4A3F8A;
+  --indigo-soft: #7A6FBA; --lavender: #EAE8F5; --text: #1A1630;
+  --muted: #6B6490; --master: #C94C4C; --master-bg: #FFF0F0;
+  --radius: 16px; --radius-sm: 8px;
+}
+body { font-family: 'Jost', sans-serif; background: linear-gradient(160deg,#F5F3FC 0%,#EDE8FA 40%,#FDF7E8 100%); min-height: 100vh; color: var(--text); padding: 0 0 1.5rem; }
+a { text-decoration: none; color: inherit; }
+header { text-align: center; padding: 1.5rem 1.5rem 1rem; }
+.header-ornament { font-family: 'Cormorant Garamond',serif; font-size: 11px; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; margin-bottom: 0.75rem; display: block; }
+header h1 { font-family: 'Cormorant Garamond',serif; font-size: 1.9rem; font-weight: 300; color: var(--deep); line-height: 1.1; }
+header h1 span { color: var(--indigo); font-style: italic; }
+.header-line { width: 30px; height: 1px; background: var(--gold); margin: 0.6rem auto 0; }
+.container { max-width: 420px; margin: 0 auto; padding: 0 1.25rem; }
 
-  :root {
-    --gold: #C9A84C;
-    --gold-light: #F0D898;
-    --gold-pale: #FDF7E8;
-    --deep: #1A1630;
-    --deep-mid: #2E2850;
-    --indigo: #4A3F8A;
-    --indigo-soft: #7A6FBA;
-    --lavender: #EAE8F5;
-    --text: #1A1630;
-    --muted: #6B6490;
-    --master: #C94C4C;
-    --master-bg: #FFF0F0;
-    --radius: 16px;
-    --radius-sm: 8px;
-  }
+.card { background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); border: 1px solid rgba(201,168,76,0.25); border-radius: var(--radius); padding: 1.25rem 1.25rem 1rem; margin-bottom: 1rem; }
+.card-title { font-family: 'Cormorant Garamond',serif; font-size: 1.2rem; font-weight: 400; color: var(--deep); margin-bottom: 0.2rem; }
+.card-subtitle { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.4; }
 
-  body {
-    font-family: 'Jost', sans-serif;
-    background: linear-gradient(160deg, #F5F3FC 0%, #EDE8FA 40%, #FDF7E8 100%);
-    min-height: 100vh;
-    color: var(--text);
-    padding: 0 0 1.5rem;
-  }
+.form-group { margin-bottom: 1rem; }
+label { display: block; font-size: 0.78rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; font-weight: 500; }
+input[type="date"] { width: 100%; padding: 0.7rem 1rem; border: 1.5px solid rgba(74,63,138,0.2); border-radius: var(--radius-sm); font-family: 'Jost',sans-serif; font-size: 1rem; color: var(--text); background: #fff; transition: border-color 0.2s; -webkit-appearance: none; appearance: none; }
+input[type="date"]:focus { outline: none; border-color: var(--indigo); }
+.error-msg { font-size: 0.78rem; color: var(--master); margin-top: 0.3rem; display: none; }
+.error-msg.visible { display: block; }
 
-  header {
-    text-align: center;
-    padding: 1.5rem 1.5rem 1rem;
-    position: relative;
-  }
+.btn-primary { width: 100%; padding: 0.85rem; background: linear-gradient(135deg,var(--indigo) 0%,var(--deep-mid) 100%); color: #fff; border: none; border-radius: var(--radius-sm); font-family: 'Jost',sans-serif; font-size: 0.95rem; font-weight: 500; letter-spacing: 1px; cursor: pointer; transition: opacity 0.2s,transform 0.1s; margin-top: 0.5rem; }
+.btn-primary:active { transform: scale(0.98); opacity: 0.9; }
 
-  .header-ornament {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 11px;
-    letter-spacing: 4px;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 0.75rem;
-    display: block;
-  }
+.btn-secondary { background: transparent; border: 1.5px solid rgba(74,63,138,0.35); color: var(--indigo); padding: 0.6rem 1.2rem; border-radius: var(--radius-sm); font-family: 'Jost',sans-serif; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; display: inline-block; margin-top: 0.75rem; }
+.btn-secondary:active { background: var(--lavender); }
 
-  header h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.9rem;
-    font-weight: 300;
-    color: var(--deep);
-    line-height: 1.1;
-    letter-spacing: -0.5px;
-  }
+.btn-interp { background: transparent; border: 1px solid rgba(201,168,76,0.5); color: var(--gold); font-family: 'Jost',sans-serif; font-size: 0.72rem; font-weight: 500; letter-spacing: 1px; padding: 0.3rem 0.7rem; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: background 0.2s; -webkit-user-select: none; user-select: none; }
+.btn-interp:active { background: rgba(201,168,76,0.1); }
 
-  header h1 span {
-    color: var(--indigo);
-    font-style: italic;
-  }
+.book-card { display: flex; gap: 0.85rem; align-items: center; background: rgba(255,255,255,0.9); border: 1px solid rgba(201,168,76,0.3); border-radius: var(--radius); padding: 0.9rem 1rem; text-decoration: none; color: var(--text); transition: box-shadow 0.2s; margin-bottom: 1rem; }
+.book-card:active { box-shadow: 0 4px 20px rgba(74,63,138,0.15); }
+.book-cover { width: 64px; min-width: 64px; height: 88px; background: linear-gradient(160deg,var(--indigo) 0%,var(--deep) 100%); border-radius: 4px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.book-cover-text { color: var(--gold-light); font-family: 'Cormorant Garamond',serif; font-size: 9px; font-weight: 600; text-align: center; padding: 4px; line-height: 1.3; }
+.book-cover-star { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); color: var(--gold); font-size: 14px; }
+.book-info { flex: 1; }
+.book-badge { display: inline-block; background: var(--gold-pale); color: #8A6010; font-size: 0.68rem; letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; border: 1px solid rgba(201,168,76,0.4); margin-bottom: 0.35rem; font-weight: 500; }
+.book-title { font-family: 'Cormorant Garamond',serif; font-size: 1.05rem; font-weight: 600; color: var(--deep); line-height: 1.2; margin-bottom: 0.2rem; }
+.book-author { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.4rem; }
+.book-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.book-arrow { font-size: 1.1rem; color: var(--gold); align-self: center; }
 
-  .header-line {
-    width: 30px;
-    height: 1px;
-    background: var(--gold);
-    margin: 0.6rem auto 0;
-  }
+.contact-card { background: rgba(255,255,255,0.85); border: 1px solid rgba(74,63,138,0.15); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.contact-name { font-family: 'Cormorant Garamond',serif; font-size: 1.2rem; color: var(--deep); font-weight: 600; margin-bottom: 0.75rem; }
+.contact-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid rgba(74,63,138,0.08); font-size: 0.9rem; color: var(--text); text-decoration: none; }
+.contact-row:last-child { border-bottom: none; }
+.contact-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.contact-icon.wa { background: #e8f8ee; }
+.contact-icon.mail { background: var(--lavender); }
 
-  .container {
-    max-width: 420px;
-    margin: 0 auto;
-    padding: 0 1.25rem;
-  }
+#result-section { display: none; }
+.pinacle-title { text-align: center; letter-spacing: 3px; text-transform: uppercase; font-size: 0.68rem; color: var(--gold); font-weight: 500; margin-bottom: 0; opacity: 0.8; }
+.pinacle-wrap { position: relative; width: 100%; max-width: 300px; margin: 0 auto 0.5rem; }
+svg.pinacle { width: 100%; height: auto; overflow: visible; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.num-text, .num-node { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.num-node { cursor: pointer; }
+.num-text { font-family: 'Cormorant Garamond',serif; font-size: 18px; font-weight: 600; fill: #1A1630; text-anchor: middle; dominant-baseline: central; }
+.num-text.main-text { fill: #2E2850; font-size: 20px; }
+.num-text.master-text { fill: #A83030; }
 
-  /* ── FORM ── */
-  .card {
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(201,168,76,0.25);
-    border-radius: var(--radius);
-    padding: 1.25rem 1.25rem 1rem;
-    margin-bottom: 1rem;
-  }
+.destino-row { text-align: center; margin: 0.25rem 0 0.75rem; padding: 0.5rem 1rem; background: linear-gradient(135deg,var(--lavender),#FDF7E8); border-radius: var(--radius-sm); border: 1px solid rgba(201,168,76,0.3); }
+.destino-label { font-size: 0.68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.destino-value { font-family: 'Cormorant Garamond',serif; font-size: 1.8rem; font-weight: 600; color: var(--deep); line-height: 1.1; cursor: pointer; }
+.destino-value.master-num { color: #A83030; }
 
-  .card-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2rem;
-    font-weight: 400;
-    color: var(--deep);
-    margin-bottom: 0.2rem;
-  }
-  .card-subtitle {
-    font-size: 0.8rem;
-    color: var(--muted);
-    margin-bottom: 1rem;
-    line-height: 1.4;
-  }
+.master-notice { display: none; background: var(--master-bg); border: 1px solid rgba(201,76,76,0.3); border-radius: var(--radius-sm); padding: 0.75rem 1rem; font-size: 0.82rem; color: #8B2020; line-height: 1.5; margin-bottom: 1rem; }
+.master-notice.visible { display: flex; gap: 0.5rem; align-items: flex-start; }
+.master-dot { width: 8px; height: 8px; min-width: 8px; border-radius: 50%; background: var(--master); margin-top: 4px; }
 
-  .form-group {
-    margin-bottom: 1rem;
-  }
-  label {
-    display: block;
-    font-size: 0.78rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.4rem;
-    font-weight: 500;
-  }
-  input[type="date"], input[type="text"] {
-    width: 100%;
-    padding: 0.7rem 1rem;
-    border: 1.5px solid rgba(74,63,138,0.2);
-    border-radius: var(--radius-sm);
-    font-family: 'Jost', sans-serif;
-    font-size: 1rem;
-    color: var(--text);
-    background: #fff;
-    transition: border-color 0.2s;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  input[type="date"]:focus, input[type="text"]:focus {
-    outline: none;
-    border-color: var(--indigo);
-  }
-  .error-msg {
-    font-size: 0.78rem;
-    color: var(--master);
-    margin-top: 0.3rem;
-    display: none;
-  }
-  .error-msg.visible { display: block; }
+.tooltip { display: none; position: fixed; left: 50%; transform: translateX(-50%); bottom: 5rem; background: #1A1630; border: 1px solid rgba(201,168,76,0.4); color: #EAE8F5; border-radius: var(--radius-sm); padding: 0.65rem 1rem; font-size: 0.85rem; line-height: 1.4; max-width: 260px; width: max-content; text-align: center; pointer-events: none; z-index: 999; }
+.tooltip.visible { display: block; }
+.tooltip strong { font-weight: 600; color: var(--gold-light); display: block; margin-bottom: 2px; font-size: 1.1rem; }
 
-  .btn-primary {
-    width: 100%;
-    padding: 0.85rem;
-    background: linear-gradient(135deg, var(--indigo) 0%, var(--deep-mid) 100%);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-family: 'Jost', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 500;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.1s;
-    margin-top: 0.5rem;
-  }
-  .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+.interp-overlay { display: none; position: fixed; inset: 0; background: rgba(20,16,40,0.55); z-index: 1000; padding: 1rem; overflow-y: auto; }
+.interp-overlay.visible { display: block; }
+.interp-panel { background: #fff; border-radius: var(--radius); border: 1px solid rgba(201,168,76,0.3); width: 100%; max-width: 420px; margin: 1rem auto; padding: 1.25rem 1.25rem 1.5rem; }
+.interp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.interp-header-title { font-family: 'Cormorant Garamond',serif; font-size: 1.1rem; font-weight: 600; color: var(--deep); }
+.interp-close { background: none; border: none; font-size: 1.2rem; color: var(--muted); cursor: pointer; padding: 0.2rem 0.4rem; }
+.interp-body { font-size: 0.88rem; line-height: 1.75; color: var(--text); }
+.interp-body p { margin-bottom: 0.85rem; }
+.interp-loading { display: flex; align-items: center; gap: 0.6rem; color: var(--muted); font-size: 0.85rem; padding: 1rem 0; }
+.interp-spinner { width: 16px; height: 16px; border: 2px solid rgba(74,63,138,0.2); border-top-color: var(--indigo); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.interp-destino { margin-top: 1rem; padding: 0.85rem 1rem; background: linear-gradient(135deg,var(--lavender),#FDF7E8); border-radius: var(--radius-sm); border: 1px solid rgba(201,168,76,0.3); }
+.interp-destino-label { font-size: 0.68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+.interp-destino-text { font-size: 0.85rem; line-height: 1.65; color: var(--text); }
 
-  .btn-secondary {
-    background: transparent;
-    border: 1.5px solid rgba(74,63,138,0.35);
-    color: var(--indigo);
-    padding: 0.6rem 1.2rem;
-    border-radius: var(--radius-sm);
-    font-family: 'Jost', sans-serif;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: background 0.2s;
-    display: inline-block;
-    margin-top: 0.75rem;
-  }
-  .btn-secondary:active { background: var(--lavender); }
-
-  /* ── PINÁCULO ── */
-  #result-section { display: none; }
-
-  .pinacle-title {
-    text-align: center;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-size: 0.72rem;
-    color: var(--muted);
-    font-weight: 500;
-    margin-bottom: 0.75rem;
-  }
-
-  .pinacle-wrap {
-    position: relative;
-    width: 100%;
-    max-width: 280px;
-    margin: 0 auto 0.5rem;
-  }
-
-  svg.pinacle {
-    width: 100%;
-    height: auto;
-    overflow: visible;
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
-  }
-
-  .num-text, .num-circle {
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
-  }
-
-  /* ── TOOLTIP ── */
-  .tooltip {
-    display: none;
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 5rem;
-    background: var(--deep);
-    color: #fff;
-    border-radius: var(--radius-sm);
-    padding: 0.65rem 1rem;
-    font-size: 0.85rem;
-    line-height: 1.4;
-    max-width: 260px;
-    width: max-content;
-    text-align: center;
-    pointer-events: none;
-    z-index: 999;
-    box-shadow: 0 4px 20px rgba(26,22,48,0.25);
-  }
-  .tooltip.visible { display: block; }
-  .tooltip strong {
-    font-weight: 600;
-    color: var(--gold-light);
-    display: block;
-    margin-bottom: 2px;
-    font-size: 1rem;
-  }
-
-  .num-circle {
-    fill: white;
-    stroke: rgba(74,63,138,0.3);
-    stroke-width: 1.5;
-  }
-  .num-circle.main {
-    fill: var(--lavender);
-    stroke: var(--indigo-soft);
-    stroke-width: 2;
-  }
-  .num-text {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 18px;
-    font-weight: 600;
-    fill: var(--deep);
-    text-anchor: middle;
-    dominant-baseline: central;
-  }
-  .num-circle.master-num {
-    fill: var(--master-bg);
-    stroke: var(--master);
-    stroke-width: 2;
-  }
-  .num-text.master-num {
-    fill: var(--master);
-  }
-  .label-text {
-    font-family: 'Jost', sans-serif;
-    font-size: 9px;
-    font-weight: 500;
-    fill: var(--muted);
-    text-anchor: middle;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .connector {
-    stroke: rgba(74,63,138,0.2);
-    stroke-width: 1;
-    fill: none;
-    stroke-dasharray: 4 3;
-  }
-
-  .destino-row {
-    text-align: center;
-    margin: 0.25rem 0 0.75rem;
-    padding: 0.5rem 1rem;
-    background: linear-gradient(135deg, var(--lavender), #FDF7E8);
-    border-radius: var(--radius-sm);
-    border: 1px solid rgba(201,168,76,0.3);
-  }
-  .destino-label {
-    font-size: 0.68rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .destino-value {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.7rem;
-    font-weight: 600;
-    color: var(--deep);
-    line-height: 1.1;
-  }
-  .destino-value.master-num {
-    color: var(--master);
-  }
-
-  /* master notice */
-  .master-notice {
-    display: none;
-    background: var(--master-bg);
-    border: 1px solid rgba(201,76,76,0.3);
-    border-radius: var(--radius-sm);
-    padding: 0.75rem 1rem;
-    font-size: 0.82rem;
-    color: #8B2020;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-  }
-  .master-notice.visible { display: flex; gap: 0.5rem; align-items: flex-start; }
-  .master-dot {
-    width: 8px;
-    height: 8px;
-    min-width: 8px;
-    border-radius: 50%;
-    background: var(--master);
-    margin-top: 4px;
-  }
-
-  /* ── BOOK CARD ── */
-  .book-card {
-    display: flex;
-    gap: 0.85rem;
-    align-items: center;
-    background: rgba(255,255,255,0.9);
-    border: 1px solid rgba(201,168,76,0.3);
-    border-radius: var(--radius);
-    padding: 0.9rem 1rem;
-    text-decoration: none;
-    color: inherit;
-    transition: box-shadow 0.2s;
-    margin-bottom: 1rem;
-  }
-  .book-card:active { box-shadow: 0 4px 20px rgba(74,63,138,0.15); }
-  .book-cover {
-    width: 64px;
-    min-width: 64px;
-    height: 88px;
-    background: linear-gradient(160deg, var(--indigo) 0%, var(--deep) 100%);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .book-cover-text {
-    color: var(--gold-light);
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 9px;
-    font-weight: 600;
-    text-align: center;
-    letter-spacing: 0.5px;
-    padding: 4px;
-    line-height: 1.3;
-  }
-  .book-cover-star {
-    position: absolute;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--gold);
-    font-size: 14px;
-  }
-  .book-info { flex: 1; }
-  .book-badge {
-    display: inline-block;
-    background: var(--gold-pale);
-    color: #8A6010;
-    font-size: 0.68rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 2px 8px;
-    border-radius: 20px;
-    border: 1px solid rgba(201,168,76,0.4);
-    margin-bottom: 0.35rem;
-    font-weight: 500;
-  }
-  .book-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: var(--deep);
-    line-height: 1.2;
-    margin-bottom: 0.2rem;
-  }
-  .book-author {
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-bottom: 0.4rem;
-  }
-  .book-desc {
-    font-size: 0.78rem;
-    color: var(--muted);
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  .book-arrow {
-    font-size: 1.1rem;
-    color: var(--gold);
-    align-self: center;
-  }
-
-  /* ── CONTACT ── */
-  .contact-card {
-    background: rgba(255,255,255,0.85);
-    border: 1px solid rgba(74,63,138,0.15);
-    border-radius: var(--radius);
-    padding: 1rem 1.25rem;
-    margin-bottom: 1rem;
-  }
-  .contact-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2rem;
-    color: var(--deep);
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-  }
-  .contact-row {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(74,63,138,0.08);
-    font-size: 0.9rem;
-    color: var(--text);
-    text-decoration: none;
-  }
-  .contact-row:last-child { border-bottom: none; }
-  .contact-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .contact-icon.wa { background: #e8f8ee; }
-  .contact-icon.mail { background: var(--lavender); }
-
-  footer {
-    text-align: center;
-    padding: 1rem;
-    font-size: 0.72rem;
-    color: var(--muted);
-    letter-spacing: 1px;
-  }
-
-  /* Stars decoration */
-  .stars-deco {
-    text-align: center;
-    color: var(--gold);
-    font-size: 10px;
-    letter-spacing: 6px;
-    margin: 1rem 0 0;
-    opacity: 0.7;
-  }
+.stars-deco { text-align: center; color: var(--gold); font-size: 10px; letter-spacing: 6px; margin: 1rem 0 0; opacity: 0.7; }
+footer { text-align: center; padding: 1rem; font-size: 0.72rem; color: var(--muted); letter-spacing: 1px; }
 </style>
 </head>
 <body>
@@ -476,22 +115,19 @@
 
 <div class="container">
 
-  <!-- FORM SECTION -->
+  <!-- FORMULARIO -->
   <div id="form-section">
     <div class="card">
       <p class="card-title">Bienvenido/a</p>
       <p class="card-subtitle">Introduce tu fecha de nacimiento para revelar los números que definen tu esencia.</p>
-
       <div class="form-group">
         <label for="birthdate">Fecha de nacimiento</label>
-        <input type="date" id="birthdate" min="1900-01-01" max="2025-12-31" />
-        <p class="error-msg" id="date-error">Por favor, introduce una fecha válida (desde 1900).</p>
+        <input type="date" id="birthdate" min="1900-01-01"/>
+        <p class="error-msg" id="date-error">Por favor, introduce una fecha válida.</p>
       </div>
-
       <button class="btn-primary" onclick="calcular()">Revelar mi mapa ✦</button>
     </div>
 
-    <!-- BOOK CARD (visible siempre) -->
     <a href="https://www.amazon.es/ALCYONE-BELLEZA-EN-EL-TODO/dp/846972326X/" target="_blank" class="book-card">
       <div class="book-cover">
         <span class="book-cover-star">✦</span>
@@ -506,7 +142,6 @@
       <span class="book-arrow">›</span>
     </a>
 
-    <!-- CONTACT -->
     <div class="contact-card">
       <p class="contact-name">David Gil</p>
       <a href="https://wa.me/34625000000" class="contact-row">
@@ -524,83 +159,57 @@
     </div>
   </div>
 
-  <!-- RESULT SECTION -->
+  <!-- RESULTADO -->
   <div id="result-section">
-    <div class="card" style="padding-bottom: 1.5rem;">
-      <p id="result-name" class="pinacle-title" style="margin-bottom:1.5rem;">Tu Pináculo Numerológico</p>
+    <div class="card" style="padding-bottom:1.5rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <p class="pinacle-title">Tu Pináculo Numerológico</p>
+      </div>
 
-      <!-- MASTER NOTICE -->
       <div class="master-notice" id="master-notice">
         <div class="master-dot"></div>
         <span id="master-notice-text"></span>
       </div>
 
-      <!-- SVG PINACLE -->
       <div class="pinacle-wrap">
-        <svg class="pinacle" viewBox="0 0 260 320" xmlns="http://www.w3.org/2000/svg" id="pinacle-svg">
-          <!-- Triángulo superior: MM-DD-D4, DD-AR-D5, D4-D5-D6 -->
-          <line class="connector" x1="50" y1="175" x2="82" y2="108"/>
-          <line class="connector" x1="130" y1="175" x2="82" y2="108"/>
-          <line class="connector" x1="130" y1="175" x2="178" y2="108"/>
-          <line class="connector" x1="210" y1="175" x2="178" y2="108"/>
-          <line class="connector" x1="82" y1="108" x2="130" y2="34"/>
-          <line class="connector" x1="178" y1="108" x2="130" y2="34"/>
-          <!-- Triángulo inferior: MM-DD-D7, DD-AR-D8, D7-D8-D9 -->
-          <line class="connector" x1="50" y1="185" x2="82" y2="252"/>
-          <line class="connector" x1="130" y1="185" x2="82" y2="252"/>
-          <line class="connector" x1="130" y1="185" x2="178" y2="252"/>
-          <line class="connector" x1="210" y1="185" x2="178" y2="252"/>
-          <line class="connector" x1="82" y1="252" x2="130" y2="300"/>
-          <line class="connector" x1="178" y1="252" x2="130" y2="300"/>
-
-          <!-- D6: punta superior -->
-          <circle id="c6" cx="130" cy="34" r="22" class="num-circle"/>
-          <text id="t6" x="130" y="34" class="num-text">–</text>
-
-          <!-- D4: medio arriba izquierda -->
-          <circle id="c4" cx="82" cy="108" r="22" class="num-circle"/>
-          <text id="t4" x="82" y="108" class="num-text">–</text>
-
-          <!-- D5: medio arriba derecha -->
-          <circle id="c5" cx="178" cy="108" r="22" class="num-circle"/>
-          <text id="t5" x="178" y="108" class="num-text">–</text>
-
-          <!-- MM: fila central izquierda -->
-          <circle id="cmm" cx="50" cy="180" r="22" class="num-circle"/>
-          <text id="tmm" x="50" y="180" class="num-text">–</text>
-
-          <!-- DD: fila central centro (ligeramente mayor) -->
-          <circle id="cdd" cx="130" cy="180" r="26" class="num-circle main"/>
-          <text id="tdd" x="130" y="180" class="num-text">–</text>
-
-          <!-- AR: fila central derecha -->
-          <circle id="car" cx="210" cy="180" r="22" class="num-circle"/>
-          <text id="tar" x="210" y="180" class="num-text">–</text>
-
-          <!-- D7: medio abajo izquierda -->
-          <circle id="c7" cx="82" cy="252" r="22" class="num-circle"/>
-          <text id="t7" x="82" y="252" class="num-text">–</text>
-
-          <!-- D8: medio abajo derecha -->
-          <circle id="c8" cx="178" cy="252" r="22" class="num-circle"/>
-          <text id="t8" x="178" y="252" class="num-text">–</text>
-
-          <!-- D9: punta inferior -->
-          <circle id="c9" cx="130" cy="300" r="22" class="num-circle"/>
-          <text id="t9" x="130" y="300" class="num-text">–</text>
+        <svg class="pinacle" viewBox="0 0 260 270" xmlns="http://www.w3.org/2000/svg" id="pinacle-svg">
+          <line x1="50" y1="138" x2="82" y2="83" stroke="rgba(74,63,138,0.2)" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
+          <line x1="130" y1="138" x2="82" y2="83" stroke="rgba(74,63,138,0.2)" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
+          <line x1="130" y1="138" x2="178" y2="83" stroke="rgba(74,63,138,0.2)" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
+          <line x1="210" y1="138" x2="178" y2="83" stroke="rgba(74,63,138,0.2)" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
+          <line x1="82" y1="83" x2="130" y2="28" stroke="rgba(74,63,138,0.2)" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
+          <line x1="178" y1="83" x2="130" y2="28" stroke="rgba(74,63,138,0.2)" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
+          <line x1="50" y1="148" x2="82" y2="203" stroke="rgba(74,63,138,0.2)" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
+          <line x1="130" y1="148" x2="82" y2="203" stroke="rgba(74,63,138,0.2)" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
+          <line x1="130" y1="148" x2="178" y2="203" stroke="rgba(74,63,138,0.2)" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
+          <line x1="210" y1="148" x2="178" y2="203" stroke="rgba(74,63,138,0.2)" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
+          <line x1="82" y1="203" x2="130" y2="248" stroke="rgba(74,63,138,0.2)" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
+          <line x1="178" y1="203" x2="130" y2="248" stroke="rgba(74,63,138,0.2)" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
+          <g class="num-node" id="node6"><circle cx="130" cy="28" r="22" fill="white" stroke="rgba(74,63,138,0.3)" stroke-width="1.5"/><text id="t6" x="130" y="28" class="num-text">–</text></g>
+          <g class="num-node" id="node4"><circle cx="82" cy="83" r="22" fill="white" stroke="rgba(74,63,138,0.3)" stroke-width="1.5"/><text id="t4" x="82" y="83" class="num-text">–</text></g>
+          <g class="num-node" id="node5"><circle cx="178" cy="83" r="22" fill="white" stroke="rgba(74,63,138,0.3)" stroke-width="1.5"/><text id="t5" x="178" y="83" class="num-text">–</text></g>
+          <g class="num-node" id="nodemm"><circle cx="50" cy="143" r="22" fill="white" stroke="rgba(74,63,138,0.3)" stroke-width="1.5"/><text id="tmm" x="50" y="143" class="num-text">–</text></g>
+          <g class="num-node" id="nodedd"><circle cx="130" cy="143" r="26" fill="#EAE8F5" stroke="#7A6FBA" stroke-width="2"/><text id="tdd" x="130" y="143" class="num-text main-text">–</text></g>
+          <g class="num-node" id="nodear"><circle cx="210" cy="143" r="22" fill="white" stroke="rgba(74,63,138,0.3)" stroke-width="1.5"/><text id="tar" x="210" y="143" class="num-text">–</text></g>
+          <g class="num-node" id="node7"><circle cx="82" cy="203" r="22" fill="white" stroke="rgba(74,63,138,0.3)" stroke-width="1.5"/><text id="t7" x="82" y="203" class="num-text">–</text></g>
+          <g class="num-node" id="node8"><circle cx="178" cy="203" r="22" fill="white" stroke="rgba(74,63,138,0.3)" stroke-width="1.5"/><text id="t8" x="178" y="203" class="num-text">–</text></g>
+          <g class="num-node" id="node9"><circle cx="130" cy="248" r="22" fill="white" stroke="rgba(74,63,138,0.3)" stroke-width="1.5"/><text id="t9" x="130" y="248" class="num-text">–</text></g>
         </svg>
       </div>
 
-      <!-- DESTINO -->
       <div class="destino-row">
-        <p class="destino-label">Número de Destino</p>
-        <p class="destino-value" id="destino-value">–</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;">
+          <div style="display:flex;align-items:baseline;gap:0.6rem;">
+            <p class="destino-label" style="margin-bottom:0;">Número de Destino</p>
+            <p class="destino-value" id="destino-value" style="margin-bottom:0;">–</p>
+          </div>
+          <button class="btn-interp" onclick="abrirInterpretacion()">✦ Interpretar</button>
+        </div>
       </div>
 
       <button class="btn-secondary" onclick="resetForm()">← Calcular otra fecha</button>
     </div>
 
-    <!-- BOOK CARD (also in results) -->
     <a href="https://www.amazon.es/ALCYONE-BELLEZA-EN-EL-TODO/dp/846972326X/" target="_blank" class="book-card">
       <div class="book-cover">
         <span class="book-cover-star">✦</span>
@@ -615,7 +224,6 @@
       <span class="book-arrow">›</span>
     </a>
 
-    <!-- CONTACT -->
     <div class="contact-card">
       <p class="contact-name">David Gil</p>
       <a href="https://wa.me/34625000000" class="contact-row">
@@ -636,6 +244,21 @@
   <div class="stars-deco">✦ · · · ✦ · · · ✦</div>
 </div>
 
+<!-- OVERLAY -->
+<div class="interp-overlay" id="interp-overlay">
+  <div class="interp-panel">
+    <div class="interp-header">
+      <span class="interp-header-title">✦ Tu lectura numerológica</span>
+      <button class="interp-close" onclick="cerrarInterpretacion()">✕</button>
+    </div>
+    <div class="interp-body" id="interp-body"></div>
+    <div class="interp-destino" id="interp-destino" style="display:none;">
+      <p class="interp-destino-label">Número de Destino · <span id="interp-destino-num-val"></span></p>
+      <div class="interp-destino-text" id="interp-destino-text"></div>
+    </div>
+  </div>
+</div>
+
 <!-- TOOLTIP -->
 <div class="tooltip" id="tooltip">
   <strong id="tooltip-num"></strong>
@@ -648,20 +271,159 @@
 const MASTERS = [11,22,33,44,55,66,77,88,99];
 function isMaster(n) { return MASTERS.includes(n); }
 
-// Descripciones: se rellenarán más adelante
 const DESCRIPCIONES = {
-  // placeholder — se actualizarán con los textos reales
+  0:'El vacío donde todo es posible. Punto de origen, silencio creador.',
+  1:'Autonomía y liderazgo. Energía pionera que abre caminos e innova.',
+  2:'Cooperación y equilibrio. Capacidad de dar, recibir y conciliar.',
+  3:'La esencia del niño interior. Creatividad, optimismo y comunicación fluida.',
+  4:'Seguridad y estructura. Orden, responsabilidad y voluntad de construir.',
+  5:'Libertad y movimiento. Carisma, aprendizaje y expansión constante.',
+  6:'Amor y entrega. Empatía, familia y equilibrio emocional profundo.',
+  7:'Búsqueda interior. Investigación, verdad y profundidad de pensamiento.',
+  8:'Poder personal y plenitud. Tenacidad, justicia y gestión de recursos.',
+  9:'Servicio y amor universal. Altruismo, perdón y vocación de entrega.',
+  10:'Liderazgo dentro del grupo. Fuerza conquistadora que guía a los demás.',
+  11:'Número maestro. Iluminación y coherencia existencial. Maestría individual y mochila ancestral.',
+  12:'Karma y esfuerzo hacia los demás. Creador de espejos para el entorno.',
+  13:'Cambios constantes. Capacidad de transformar y renovar con los números que le rodean.',
+  14:'Templanza. Paz o conflicto interior en busca del equilibrio.',
+  15:'Creación íntima. Energía de la sexualidad y la libertad creadora.',
+  16:'Patrones mentales. El amor sustentado en la creación o ruptura de valores.',
+  17:'Guía e inspiración. El trabajo interior comienza a hacerse visible a los demás.',
+  18:'Energía inconsciente. Los procesos internos se llevan en silencio y profundidad.',
+  19:'Energía consciente. Los procesos se hacen visibles. Poder del Sol irradiando.',
+  20:'Adaptación al grupo. Unión donde todos somos iguales y nos complementamos.',
+  21:'Mundo interior. Movimiento energético y proceso personal profundo.',
+  22:'Número maestro. Poder terrenal y constructor de universos. Resuelve la mochila interior.',
+  23:'Semilla del nuevo masculino. Fuerza y sensibilidad en equilibrio creciente.',
+  24:'Semilla del nuevo femenino. Responsabilidad e inseguridad que madura hacia la abundancia.',
+  25:'Aprendizaje rápido. Vive en libertad dentro de un aparente caos. Energía potente.',
+  26:'Herencia familiar. Energía recibida del linaje que moldea el presente.',
+  27:'Intuición poderosa. Capacidad de canalizar y percibir más allá de lo visible.',
+  28:'El maestro que enseña. Energía de guía y transmisión de conocimiento.',
+  29:'Espejo del inconsciente. Lo que ves en el otro pertenece a tu propio interior.',
+  30:'Niño interior familiar. Energía inconsciente que conecta con lo más profundo.',
+  31:'Autoconocimiento del inconsciente. Explorando las raíces internas.',
+  32:'Ligereza en las relaciones. Quitarle hierro a cómo nos relacionamos con todo.',
+  33:'Número maestro. Amor incondicional, compasión y trascendencia hacia la humanidad.',
+  34:'Responsabilidad interna. Asumir los propios procesos con madurez.',
+  35:'Liberación interior. Soltar los procesos que ya no sirven desde adentro.',
+  36:'Amor desde el niño interior. Sentirse amado en profundidad para alcanzar la paz.',
+  37:'Liberación mental. Soltar las dudas y pensamientos tóxicos inconscientes.',
+  38:'Impulso inconsciente. Experimentar desde dentro evitando acumular frustración.',
+  39:'Resolución de patrones. Posicionarse inconscientemente para liberar estructuras.',
+  40:'Responsabilidad estructural. Conexión con la utilidad y los pilares de la vida.',
+  41:'Utilidad propia. Responsabilizarse de las reacciones ante los procesos.',
+  42:'Responsabilidad con los reflejos. Asumir lo que el entorno nos devuelve.',
+  43:'Responsabilidad con los impulsos. Actuar con consciencia desde lo estructural.',
+  44:'Número maestro. Constructor de nuevas estructuras. Promueve cambios profundos en la humanidad.',
+  45:'Liberación de estructuras. Soltar el exceso de responsabilidad y rutinas.',
+  46:'Equilibrio emocional. Un hogar basado en la armonía de todos. Meta del número 23.',
+  47:'Mente responsable. Dar carácter ordenado a los pensamientos para que no se desboquen.',
+  48:'Verdad equilibrada. Hogar fértil y abundante donde la experiencia fluye en libertad.',
+  49:'Estructura en movimiento. Un orden que se encamina hacia la libertad.',
+  50:'Escalón de la libertad. El primer paso hacia la consciencia libre.',
+  51:'Liberación del ego profundo. Soltar las capas más arraigadas del yo.',
+  52:'Liberación con los espejos. Sanar la manera en que me relaciono con los demás.',
+  53:'Liberación de impulsos. Soltar las reacciones automáticas y actuar con consciencia.',
+  54:'Liberar las estructuras que atan. Abrir nuevos caminos más allá de la rutina.',
+  55:'Número maestro. Liberador humanitario. Rompe estructuras que ya no sirven en todo el plano.',
+  56:'Libertad y amor interno. Conectar la liberación con el equilibrio emocional.',
+  57:'Liberación de la mente. Soltar los bloqueos mentales y abrirse a nuevas perspectivas.',
+  58:'Despojo de la experiencia. Soltar la propia verdad para renovarse.',
+  59:'Libertad al servicio del amor. La liberación se pone al servicio del todo.',
+  60:'Escalón del equilibrio emocional interno. Base del amor consciente.',
+  61:'Amarse a uno mismo. El amor comienza en el interior antes de darse a los demás.',
+  62:'Amor al prójimo. Expandir el amor hacia las relaciones con los demás.',
+  63:'Amor hacia el inconsciente creador. Integrar las energías profundas con amor.',
+  64:'Amar la rutina. Dar equilibrio amoroso a los hábitos y estructuras diarias.',
+  65:'Amor por la libertad. Celebrar la liberación como expresión de amor.',
+  66:'Número maestro. La armonía del amor incondicional hecha visible en todo el plano.',
+  67:'Equilibrar los pensamientos desde el amor. Mente y corazón en armonía.',
+  68:'Amor por la experiencia. Abrazar cada vivencia como parte del camino.',
+  69:'Amor y comprensión. Aceptar las situaciones sabiendo que todo tiene un sentido.',
+  70:'Apertura de mente. El pensamiento se expande hacia nuevas comprensiones.',
+  71:'Recepción de pensamientos. Auto-observación y capacidad de autocrítica.',
+  72:'Canalización de pensamientos. La mente como puente hacia lo superior.',
+  73:'Pensamiento inconsciente. La duda surge de lo aún no conocido.',
+  74:'Pensamiento ordenado y útil. La mente al servicio de la estructura.',
+  75:'Reflexión sobre resistencias. Observar y soltar los bloqueos internos.',
+  76:'Abrir el amor a la comprensión. El pensamiento se nutre del equilibrio emocional.',
+  77:'Número maestro. Abre las puertas al conocimiento y la Verdad superior.',
+  78:'Pensar sobre cómo experimentamos la vida. Reflexión profunda sobre la propia vivencia.',
+  79:'El pensamiento atrae la experiencia. El camino hacia la propia Verdad.',
+  80:'Apertura a la experiencia. Disponibilidad para vivir todo de primera mano.',
+  81:'Experiencia directa. No hay duda de la propia vivencia. Todo se aprende viviéndolo.',
+  82:'Experiencia con las personas. Las relaciones son el espejo de la propia evolución.',
+  83:'Experimentación de los procesos anclados. Sacar a la luz lo que estaba oculto.',
+  84:'Anclaje de materia. Experimentar desde la solidez de lo construido.',
+  85:'Experimentar la libertad. Vivir en primera persona la expansión y el soltar.',
+  86:'Experimentar desde el equilibrio emocional. Crear lo visible desde la armonía interior.',
+  87:'Experimentar con la duda y el pensamiento. La incertidumbre como maestra.',
+  88:'Número maestro. Gran conector con la Verdad Suprema. Experimentador del inconsciente colectivo.',
+  89:'Experimentar el propósito. La experiencia al servicio de la misión del alma.',
+  90:'La experiencia como apariencia del todo. La vida refleja lo que somos.',
+  91:'Plenitud sobre uno mismo. La vida se vive desde la totalidad interior.',
+  92:'Entregarse a la vida. Observar cómo me relaciono con todo lo que soy.',
+  93:'Observar la creación inconsciente de la vida. Ver qué estoy construyendo sin saberlo.',
+  94:'Ver los hábitos reflejados en la vida. La rutina como espejo del alma.',
+  95:'Ver bloqueos y limitaciones en la vida. La vida muestra lo que aún queda por soltar.',
+  96:'Ver el equilibrio emocional en la vida. El amor se refleja en lo que nos rodea.',
+  97:'Ver la distorsión mental al observar la vida. El pensamiento colorea la realidad.',
+  98:'La vida y la experiencia son inseparables. Vivir es conocer.',
+  99:'Número maestro. El propósito de todos los caminos. La Unión de todos en la trascendencia.'
 };
 
-// Valores actuales de cada nodo para el tooltip
+const POSICION = {
+  'dd':'Tu día de nacimiento — el número más importante. Es quien eres en esencia.',
+  'mm':'Tu mes de nacimiento — parte de tu esencia natural.',
+  'ar':'Tu año reducido — parte de tu esencia natural.',
+  '4':'Tus ancestros — la energía que te precede y te sostiene.',
+  '5':'Tus ancestros — la energía que te precede y te sostiene.',
+  '6':'Tu maestro — la energía superior que guía tu camino.',
+  '7':'Tu plano emocional — lo que necesitas trabajar y sentir.',
+  '8':'Tu plano emocional — lo que necesitas trabajar y sentir.',
+  '9':'Tu ancla a tierra — lo más visible de ti, lo que te enraíza.',
+  '10':'Tu número de Destino — lo que vienes a depurar durante toda tu vida.'
+};
+
 const nodeValues = {};
+let currentNumbers = {};
+
+function reduceSingle(n) {
+  while (n > 9) n = String(n).split('').reduce((a,c) => a + parseInt(c), 0);
+  return n;
+}
+
+function calcAR(yyyy) {
+  if (yyyy >= 2000) {
+    const s = String(yyyy);
+    const left  = reduceSingle(parseInt(s[0]) + parseInt(s[1]));
+    const right = reduceSingle(parseInt(s[2]) + parseInt(s[3]));
+    return parseInt('' + left + right);
+  }
+  return String(yyyy).split('').reduce((a,c) => a + parseInt(c), 0);
+}
+
+function getTodayString() {
+  const t = new Date();
+  return t.getFullYear() + '-' + String(t.getMonth()+1).padStart(2,'0') + '-' + String(t.getDate()).padStart(2,'0');
+}
+document.getElementById('birthdate').max = getTodayString();
 
 function setNode(id, value) {
-  const circle = document.getElementById('c' + id);
-  const textEl = document.getElementById('t' + id);
-  const isM = isMaster(value);
-  circle.className.baseVal = 'num-circle' + (isM ? ' master-num' : '') + (id === 'dd' ? ' main' : '');
-  textEl.className.baseVal = 'num-text' + (isM ? ' master-num' : '');
+  const nodeId = id==='dd'?'nodedd':id==='mm'?'nodemm':id==='ar'?'nodear':'node'+id;
+  const node = document.getElementById(nodeId);
+  const bg = node ? node.querySelector('circle') : null;
+  const textEl = document.getElementById('t'+id);
+  const isM = isMaster(value), isMain = (id==='dd');
+  if (bg) {
+    if (isM) { bg.setAttribute('fill','#FFF0F0'); bg.setAttribute('stroke','#C94C4C'); bg.setAttribute('stroke-width','2'); }
+    else if (isMain) { bg.setAttribute('fill','#EAE8F5'); bg.setAttribute('stroke','#7A6FBA'); bg.setAttribute('stroke-width','2'); }
+    else { bg.setAttribute('fill','white'); bg.setAttribute('stroke','rgba(74,63,138,0.3)'); bg.setAttribute('stroke-width','1.5'); }
+  }
+  textEl.className.baseVal = 'num-text'+(isM?' master-text':isMain?' main-text':'');
+  textEl.setAttribute('font-size', isMain ? (value >= 10 ? '16' : '20') : (value >= 10 ? '14' : '18'));
   textEl.textContent = value;
   nodeValues[id] = value;
 }
@@ -670,50 +432,30 @@ function calcular() {
   const input = document.getElementById('birthdate');
   const errorEl = document.getElementById('date-error');
   const val = input.value;
-
-  if (!val) {
-    errorEl.classList.add('visible');
-    errorEl.textContent = 'Por favor, introduce tu fecha de nacimiento.';
-    return;
-  }
-
-  const [yyyy, mm, dd] = val.split('-').map(Number);
-
-  if (yyyy < 1900) {
-    errorEl.classList.add('visible');
-    errorEl.textContent = 'El año debe ser 1900 o posterior.';
-    return;
-  }
-
+  if (!val) { errorEl.classList.add('visible'); errorEl.textContent = 'Por favor, introduce tu fecha de nacimiento.'; return; }
+  const [yyyy,mm,dd] = val.split('-').map(Number);
+  if (yyyy < 1900) { errorEl.classList.add('visible'); errorEl.textContent = 'El año debe ser 1900 o posterior.'; return; }
+  if (new Date(yyyy,mm-1,dd) > new Date()) { errorEl.classList.add('visible'); errorEl.textContent = 'La fecha no puede ser posterior a hoy.'; return; }
   errorEl.classList.remove('visible');
 
-  const ar = String(yyyy).split('').reduce((a,c)=>a+parseInt(c),0);
-  const d4 = dd + mm;
-  const d5 = dd + ar;
-  const d6 = d4 + d5;
-  const d7 = Math.abs(dd - mm);
-  const d8 = Math.abs(dd - ar);
-  const d9 = Math.abs(d7 - d8);
-  const d10 = dd + mm + ar;
+  const ar = calcAR(yyyy);
+  const d4 = dd+mm, d5 = dd+ar, d6 = d4+d5;
+  const d7 = Math.abs(dd-mm), d8 = Math.abs(dd-ar), d9 = Math.abs(d7-d8);
+  const d10 = dd+mm+ar;
 
-  setNode('dd', dd);
-  setNode('mm', mm);
-  setNode('ar', ar);
-  setNode('4',  d4);
-  setNode('5',  d5);
-  setNode('6',  d6);
-  setNode('7',  d7);
-  setNode('8',  d8);
-  setNode('9',  d9);
+  setNode('dd',dd); setNode('mm',mm); setNode('ar',ar);
+  setNode('4',d4);  setNode('5',d5);  setNode('6',d6);
+  setNode('7',d7);  setNode('8',d8);  setNode('9',d9);
+  currentNumbers = {dd,mm,ar,d4,d5,d6,d7,d8,d9,d10};
 
-  const destinoEl = document.getElementById('destino-value');
-  destinoEl.textContent = d10;
-  destinoEl.className = 'destino-value' + (isMaster(d10) ? ' master-num' : '');
+  const dest = document.getElementById('destino-value');
+  dest.textContent = d10;
+  dest.className = 'destino-value'+(isMaster(d10)?' master-num':'');
   nodeValues['10'] = d10;
 
   document.getElementById('form-section').style.display = 'none';
   document.getElementById('result-section').style.display = 'block';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function resetForm() {
@@ -721,60 +463,112 @@ function resetForm() {
   document.getElementById('result-section').style.display = 'none';
   document.getElementById('birthdate').value = '';
   hideTooltip();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── TOOLTIP ──
-const tooltip    = document.getElementById('tooltip');
+// TOOLTIP
+const tooltip = document.getElementById('tooltip');
 const tooltipNum = document.getElementById('tooltip-num');
-const tooltipDesc= document.getElementById('tooltip-desc');
+const tooltipDesc = document.getElementById('tooltip-desc');
 
-function showTooltip(nodeId) {
-  const val = nodeValues[nodeId];
+function showTooltip(id) {
+  const val = nodeValues[id];
   if (val === undefined) return;
-  const desc = DESCRIPCIONES[val] || 'Descripción próximamente';
+  const desc = DESCRIPCIONES[val] || 'Vibración en exploración.';
+  const pos = POSICION[id] || '';
   tooltipNum.textContent = val;
-  tooltipDesc.textContent = desc;
+  tooltipDesc.innerHTML = (pos?'<em style="font-size:0.78rem;opacity:0.7;display:block;margin-bottom:4px;">'+pos+'</em>':'')+desc;
   tooltip.classList.add('visible');
 }
+function hideTooltip() { tooltip.classList.remove('visible'); }
 
-function hideTooltip() {
-  tooltip.classList.remove('visible');
-}
+['dd','mm','ar','4','5','6','7','8','9'].forEach(id => {
+  const nodeId = id==='dd'?'nodedd':id==='mm'?'nodemm':id==='ar'?'nodear':'node'+id;
+  const g = document.getElementById(nodeId);
+  if (!g) return;
+  g.addEventListener('mousedown', () => showTooltip(id));
+  g.addEventListener('touchstart', e => { e.preventDefault(); showTooltip(id); }, {passive:false});
+  g.addEventListener('mouseup', hideTooltip);
+  g.addEventListener('mouseleave', hideTooltip);
+  g.addEventListener('touchend', e => { e.preventDefault(); hideTooltip(); }, {passive:false});
+  g.addEventListener('touchcancel', hideTooltip);
+  g.style.cursor = 'pointer';
+});
 
-// Bind touch/mouse events a cada nodo del pináculo
-const nodeIds = ['dd','mm','ar','4','5','6','7','8','9'];
+const destEl = document.getElementById('destino-value');
+destEl.addEventListener('mousedown', () => showTooltip('10'));
+destEl.addEventListener('touchstart', e => { e.preventDefault(); showTooltip('10'); }, {passive:false});
+destEl.addEventListener('mouseup', hideTooltip);
+destEl.addEventListener('mouseleave', hideTooltip);
+destEl.addEventListener('touchend', e => { e.preventDefault(); hideTooltip(); }, {passive:false});
+destEl.style.cursor = 'pointer';
+destEl.style.userSelect = 'none';
+destEl.style.webkitUserSelect = 'none';
 
-function bindNode(id) {
-  const circle = document.getElementById('c' + id);
-  const text   = document.getElementById('t'  + id);
-  [circle, text].forEach(el => {
-    el.addEventListener('mousedown',   () => showTooltip(id));
-    el.addEventListener('touchstart',  (e) => { e.preventDefault(); showTooltip(id); }, { passive: false });
-    el.addEventListener('mouseup',     hideTooltip);
-    el.addEventListener('mouseleave',  hideTooltip);
-    el.addEventListener('touchend',    (e) => { e.preventDefault(); hideTooltip(); }, { passive: false });
-    el.addEventListener('touchcancel', hideTooltip);
-    el.style.cursor = 'pointer';
+document.getElementById('birthdate').addEventListener('keydown', e => { if (e.key==='Enter') calcular(); });
+
+// INTERPRETACIÓN
+function abrirInterpretacion() {
+  const overlay = document.getElementById('interp-overlay');
+  const body = document.getElementById('interp-body');
+  const destino = document.getElementById('interp-destino');
+  overlay.classList.add('visible');
+  body.innerHTML = '<div class="interp-loading"><div class="interp-spinner"></div><span>Generando tu lectura...</span></div>';
+  destino.style.display = 'none';
+
+  const n = currentNumbers;
+  const maestros = [n.dd,n.mm,n.ar,n.d4,n.d5,n.d6,n.d7,n.d8,n.d9].filter(v => MASTERS.includes(v));
+
+  const prompt = `Eres un numerólogo experto en el sistema de David Gil Pérez (Escuela Reconexión Consciente).
+Haz una lectura numerológica personalizada, narrativa, cálida y profunda, en español.
+
+Pináculo de la persona:
+- Día (DD): ${n.dd} — número esencial, el más importante
+- Mes (MM): ${n.mm} — parte de su esencia natural
+- Año reducido (AR): ${n.ar} — parte de su esencia natural
+- D4 (ancestros izquierda): ${n.d4}
+- D5 (ancestros derecha): ${n.d5}
+- D6 (el maestro, cima): ${n.d6}
+- D7 (plano emocional izquierdo): ${n.d7}
+- D8 (plano emocional derecho): ${n.d8}
+- D9 (ancla a tierra, base): ${n.d9}
+${maestros.length>0?'- NÚMEROS MAESTROS presentes: '+maestros.join(', '):''}
+
+Escribe 3-4 párrafos narrativos que cubran:
+1. La esencia de la persona (DD, MM, AR)
+2. La influencia de los ancestros y el maestro (D4, D5, D6)
+3. El plano emocional y el ancla a tierra (D7, D8, D9)
+${maestros.length>0?'4. Mención especial a los números maestros presentes':''}
+
+Tono íntimo, esperanzador y respetuoso. Solo párrafos, sin títulos ni listas.
+NO incluyas nada sobre el Número de Destino (${n.d10}).`;
+
+  const promptDestino = `En la numerología de David Gil Pérez, el Número de Destino es aquello que la persona viene a depurar durante toda su vida.
+El Número de Destino es: ${n.d10}
+Escribe 2-3 frases íntimas y profundas sobre su significado. Tono esperanzador. Sin títulos ni listas.`;
+
+  Promise.all([
+    fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})}).then(r=>r.json()),
+    fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:promptDestino}]})}).then(r=>r.json())
+  ]).then(([resMain,resDest]) => {
+    const textMain = resMain.content?.map(b=>b.text||'').join('')||'No se pudo generar la lectura.';
+    const textDest = resDest.content?.map(b=>b.text||'').join('')||'';
+    body.innerHTML = textMain.split('\n').filter(p=>p.trim()).map(p=>
+      '<p>'+p.replace(/\b(\d+)\b/g,'<strong><em>$1</em></strong>')+'</p>'
+    ).join('');
+    if (textDest) {
+      document.getElementById('interp-destino-num-val').textContent = n.d10;
+      document.getElementById('interp-destino-text').innerHTML = textDest.replace(/\b(\d+)\b/g,'<strong><em>$1</em></strong>');
+      destino.style.display = 'block';
+    }
+  }).catch(() => {
+    body.innerHTML = '<p style="color:var(--muted)">No se pudo conectar. Inténtalo de nuevo.</p>';
   });
 }
 
-nodeIds.forEach(bindNode);
-
-// Bind también al destino
-const destinoEl2 = document.getElementById('destino-value');
-destinoEl2.addEventListener('mousedown',  () => showTooltip('10'));
-destinoEl2.addEventListener('touchstart', (e) => { e.preventDefault(); showTooltip('10'); }, { passive: false });
-destinoEl2.addEventListener('mouseup',    hideTooltip);
-destinoEl2.addEventListener('mouseleave', hideTooltip);
-destinoEl2.addEventListener('touchend',   (e) => { e.preventDefault(); hideTooltip(); }, { passive: false });
-destinoEl2.style.cursor = 'pointer';
-destinoEl2.style.webkitUserSelect = 'none';
-destinoEl2.style.userSelect = 'none';
-
-document.getElementById('birthdate').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') calcular();
-});
+function cerrarInterpretacion() {
+  document.getElementById('interp-overlay').classList.remove('visible');
+}
 </script>
 </body>
 </html>
