@@ -193,6 +193,15 @@
     width: 100%;
     height: auto;
     overflow: visible;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .num-text, .num-circle {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
   }
 
   /* ── TOOLTIP ── */
@@ -741,10 +750,10 @@ function bindNode(id) {
   const text   = document.getElementById('t'  + id);
   [circle, text].forEach(el => {
     el.addEventListener('mousedown',   () => showTooltip(id));
-    el.addEventListener('touchstart',  () => showTooltip(id), { passive: true });
+    el.addEventListener('touchstart',  (e) => { e.preventDefault(); showTooltip(id); }, { passive: false });
     el.addEventListener('mouseup',     hideTooltip);
     el.addEventListener('mouseleave',  hideTooltip);
-    el.addEventListener('touchend',    hideTooltip);
+    el.addEventListener('touchend',    (e) => { e.preventDefault(); hideTooltip(); }, { passive: false });
     el.addEventListener('touchcancel', hideTooltip);
     el.style.cursor = 'pointer';
   });
@@ -755,11 +764,13 @@ nodeIds.forEach(bindNode);
 // Bind también al destino
 const destinoEl2 = document.getElementById('destino-value');
 destinoEl2.addEventListener('mousedown',  () => showTooltip('10'));
-destinoEl2.addEventListener('touchstart', () => showTooltip('10'), { passive: true });
+destinoEl2.addEventListener('touchstart', (e) => { e.preventDefault(); showTooltip('10'); }, { passive: false });
 destinoEl2.addEventListener('mouseup',    hideTooltip);
 destinoEl2.addEventListener('mouseleave', hideTooltip);
-destinoEl2.addEventListener('touchend',   hideTooltip);
+destinoEl2.addEventListener('touchend',   (e) => { e.preventDefault(); hideTooltip(); }, { passive: false });
 destinoEl2.style.cursor = 'pointer';
+destinoEl2.style.webkitUserSelect = 'none';
+destinoEl2.style.userSelect = 'none';
 
 document.getElementById('birthdate').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') calcular();
