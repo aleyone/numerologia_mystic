@@ -579,8 +579,8 @@ El Número de Destino es: ${n.d10}
 Escribe 2-3 frases íntimas y profundas sobre su significado. Tono esperanzador. Sin títulos ni listas.`;
 
   Promise.all([
-    fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})}).then(r=>r.json()),
-    fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:promptDestino}]})}).then(r=>r.json())
+    fetch('/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:1000,messages:[{role:'user',content:prompt}]})}).then(r=>r.json()),
+    fetch('/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:400,messages:[{role:'user',content:promptDestino}]})}).then(r=>r.json())
   ]).then(([resMain,resDest]) => {
     const textMain = resMain.content?.map(b=>b.text||'').join('')||'No se pudo generar la lectura.';
     const textDest = resDest.content?.map(b=>b.text||'').join('')||'';
