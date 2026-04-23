@@ -583,7 +583,7 @@ Escribe 2-3 frases íntimas y profundas sobre su significado. Tono esperanzador.
     fetch('/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:400,prompt:promptDestino})}).then(r=>r.json())
   ]).then(([resMain,resDest]) => {
     if (resMain.error) {
-      body.innerHTML = '<p style="color:var(--muted)">Error de la API: ' + resMain.error + '</p>';
+      body.innerHTML = '<p style="color:var(--muted)">Error: ' + resMain.error + '</p>';
       return;
     }
     const textMain = resMain.text || 'No se pudo generar la lectura.';
