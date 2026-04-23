@@ -578,16 +578,41 @@ NO incluyas nada sobre el Número de Destino (${n.d10}).`;
 El Número de Destino es: ${n.d10}
 Escribe 2-3 frases íntimas y profundas sobre su significado. Tono esperanzador. Sin títulos ni listas.`;
 
+  async function llamarAPI(prompt, max_tokens) {
+    // Intento 1: llamada directa a Anthropic (funciona en previsualizador)
+    try {
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': '',
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-opus-4-5',
+          max_tokens,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      const data = await r.json();
+      if (data.content) return data.content.map(b => b.text || '').join('');
+    } catch(e) { /* CORS u otro error, caemos al proxy */ }
+
+    // Intento 2: proxy Vercel (funciona en producción)
+    const r2 = await fetch('/api/interpret', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, max_tokens })
+    });
+    const data2 = await r2.json();
+    if (data2.error) throw new Error(data2.error);
+    return data2.text || '';
+  }
+
   Promise.all([
-    fetch('/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:1000,prompt:prompt})}).then(r=>r.json()),
-    fetch('/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:400,prompt:promptDestino})}).then(r=>r.json())
-  ]).then(([resMain,resDest]) => {
-    if (resMain.error) {
-      body.innerHTML = '<p style="color:var(--muted)">Error: ' + resMain.error + '</p>';
-      return;
-    }
-    const textMain = resMain.text || 'No se pudo generar la lectura.';
-    const textDest = resDest.text || '';
+    llamarAPI(prompt, 1000),
+    llamarAPI(promptDestino, 400)
+  ]).then(([textMain, textDest]) => {
     body.innerHTML = textMain.split('\n').filter(p=>p.trim()).map(p=>
       '<p>'+p.replace(/\b(\d+)\b/g,'<strong><em>$1</em></strong>')+'</p>'
     ).join('');
