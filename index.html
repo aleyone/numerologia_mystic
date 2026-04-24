@@ -430,6 +430,7 @@ const nodeValues = {};
 let currentNumbers = {};
 let interpTextoMain = '';
 let interpTextoDest = '';
+let interpSintesis = '';
 let interpLista = false;
 
 // ── ANIMACIÓN ESTRELLA ──
@@ -621,10 +622,14 @@ Tono íntimo, esperanzador. Solo párrafos. NO menciones el Destino(${n.d10}).`;
 
   const promptDestino = `En la numerología de David Gil Pérez el Número de Destino es lo que la persona viene a depurar en esta vida. Destino: ${n.d10}. Escribe 2-3 frases íntimas y profundas. Tono esperanzador. Sin títulos.`;
 
-  Promise.all([llamarAPI(prompt,1500), llamarAPI(promptDestino,400)])
-  .then(([t1,t2]) => {
+  const promptSintesis = `A partir de esta lectura numerológica, escribe UN SOLO párrafo de 2-3 frases que capture la esencia más profunda de esta persona. Debe tener sentido completo por sí solo, ser poético pero concreto, y terminar con una idea que invite a descubrir más. Sin mencionar números. Sin títulos. Solo el párrafo.
+Pináculo: Día:${n.dd}, Mes:${n.mm}, Año:${n.ar}, Maestro:${n.d6}, Emocional:${n.d7}/${n.d8}, Ancla:${n.d9}, Destino:${n.d10}.`;
+
+  Promise.all([llamarAPI(prompt,1500), llamarAPI(promptDestino,400), llamarAPI(promptSintesis,200)])
+  .then(([t1,t2,t3]) => {
     interpTextoMain = t1;
     interpTextoDest = t2;
+    interpSintesis  = t3.replace(/^#+\s*/gm,'').replace(/\*\*/g,'').trim();
     interpLista = true;
     stopStarAnim();
     completeProgress();
@@ -765,8 +770,8 @@ async function compartirWhatsApp() {
   }
 
   // ── Pre-calcular extracto ──
-  const extractText = interpTextoMain
-    ? interpTextoMain.replace(/<[^>]+>/g,'').split('\n').filter(p=>p.trim()).slice(0,2).join(' ')
+  const extractText = interpSintesis
+    ? interpSintesis.replace(/^#+\s*/gm,'').replace(/\*\*/g,'').replace(/<[^>]+>/g,'').trim()
     : '';
   ctx.font = 'italic 300 29px Georgia, serif';
   const extractLines = extractText ? wrapText(ctx, extractText, W*0.78) : [];
@@ -899,69 +904,132 @@ async function compartirWhatsApp() {
   });
 }
 
-// ── PDF ──
+// ── PDF con jsPDF ──
 function descargarPDF() {
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  script.onload = () => generarPDF();
+  document.head.appendChild(script);
+}
+
+function generarPDF() {
+  const { jsPDF } = window.jspdf;
   const n = currentNumbers;
   const maestros = [...new Set([n.dd,n.mm,n.ar,n.d4,n.d5,n.d6,n.d7,n.d8,n.d9].filter(isMaster))];
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  const W = 210, M = 18, CW = W - M*2;
 
-  const win = window.open('','_blank');
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Jost',sans-serif;background:#fff;color:#1A1630;padding:40px;max-width:680px;margin:0 auto}
-.oro{color:#C9A84C}
-.header{text-align:center;border-bottom:1px solid rgba(201,168,76,0.3);padding-bottom:24px;margin-bottom:28px}
-.orn{font-size:11px;letter-spacing:4px;color:#C9A84C;text-transform:uppercase;display:block;margin-bottom:8px}
-h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:#1A1630}
-h1 span{color:#4A3F8A;font-style:italic}
-.nums{display:flex;justify-content:center;gap:32px;margin:24px 0;padding:16px;background:linear-gradient(135deg,#EAE8F5,#FDF7E8);border-radius:12px;border:1px solid rgba(201,168,76,0.3)}
-.num-block{text-align:center}
-.num-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#6B6490;margin-bottom:4px}
-.num-val{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:600;color:#1A1630}
-.num-val.master{color:#C94C4C}
-.maestros{text-align:center;padding:8px 16px;background:#FFF0F0;border:1px solid rgba(201,76,76,0.3);border-radius:8px;font-size:13px;color:#8B2020;margin-bottom:20px}
-.seccion{margin-bottom:20px}
-.seccion-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#C9A84C;margin-bottom:10px;opacity:0.8}
-.texto{font-size:14px;line-height:1.85;color:#1A1630}
-.texto p{margin-bottom:14px}
-.destino-box{margin-top:24px;padding:20px;background:linear-gradient(135deg,#EAE8F5,#FDF7E8);border-radius:12px;border:1px solid rgba(201,168,76,0.35)}
-.destino-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#6B6490;margin-bottom:6px}
-.destino-num{font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:600;color:#1A1630;margin-bottom:8px}
-.destino-texto{font-size:14px;line-height:1.75;color:#1A1630}
-.footer{text-align:center;margin-top:36px;padding-top:20px;border-top:1px solid rgba(201,168,76,0.2);font-size:11px;color:#6B6490;letter-spacing:1px}
-@media print{body{padding:20px}button{display:none}}
-</style></head><body>
-<div class="header">
-  <span class="orn">✦ Numerología Esencial ✦</span>
-  <h1>Tu <span>Pináculo Numerológico</span></h1>
-</div>
-<div class="nums">
-  <div class="num-block"><p class="num-label">Día</p><p class="num-val ${isMaster(n.dd)?'master':''}">${n.dd}</p></div>
-  <div class="num-block"><p class="num-label">Mes</p><p class="num-val ${isMaster(n.mm)?'master':''}">${n.mm}</p></div>
-  <div class="num-block"><p class="num-label">Año Red.</p><p class="num-val ${isMaster(n.ar)?'master':''}">${n.ar}</p></div>
-  <div class="num-block"><p class="num-label">Emocional</p><p class="num-val ${isMaster(n.d7)?'master':''}">${n.d7} · ${n.d8}</p></div>
-  <div class="num-block"><p class="num-label">Anclaje</p><p class="num-val ${isMaster(n.d9)?'master':''}">${n.d9}</p></div>
-</div>
-${maestros.length>0?'<div class="maestros">✦ '+(maestros.length>1?'Números maestros':'Número maestro')+': '+maestros.join(' · ')+'</div>':''}
-<div class="seccion">
-  <p class="seccion-label">Tu lectura numerológica</p>
-  <div class="texto">${interpTextoMain.split('\n').filter(p=>p.trim()).map(p=>'<p>'+p.replace(/\b(\d+)\b/g,'<strong><em>$1</em></strong>')+'</p>').join('')}</div>
-</div>
-<div class="destino-box">
-  <p class="destino-label">Número de Destino</p>
-  <p class="destino-num ${isMaster(n.d10)?'master':''}">${n.d10}</p>
-  <div class="destino-texto">${interpTextoDest.replace(/\b(\d+)\b/g,'<strong><em>$1</em></strong>')}</div>
-</div>
-<div class="footer">
-  <p>David Gil · Numerología Esencial</p>
-  <p style="margin-top:4px">numerologia-david-gil.vercel.app</p>
-</div>
-<script>window.onload=()=>setTimeout(()=>window.print(),400);<\/script>
-</body></html>`;
+  // Colores
+  const GOLD   = [201,168,76];
+  const DEEP   = [26,22,48];
+  const INDIGO = [74,63,138];
+  const MUTED  = [107,100,144];
+  const MASTER = [201,76,76];
 
-  win.document.write(html);
-  win.document.close();
+  let y = M;
+
+  // Cabecera
+  doc.setFontSize(8); doc.setTextColor(...GOLD);
+  doc.text('✦ NUMEROLOGÍA ESENCIAL ✦', W/2, y, {align:'center'});
+  y += 5;
+  doc.setDrawColor(...GOLD); doc.setLineWidth(0.3);
+  doc.line(M+20, y, W-M-20, y); y += 8;
+
+  doc.setFontSize(22); doc.setTextColor(...DEEP);
+  doc.setFont('helvetica','normal');
+  doc.text('Tu Pináculo Numerológico', W/2, y, {align:'center'});
+  y += 4;
+  doc.setDrawColor(...GOLD); doc.setLineWidth(0.3);
+  doc.line(M+20, y, W-M-20, y); y += 10;
+
+  // Números DD/MM/AR
+  doc.setFillColor(234,232,245); doc.setDrawColor(...GOLD); doc.setLineWidth(0.3);
+  doc.roundedRect(M, y, CW, 28, 3, 3, 'FD');
+  const cols = [M+CW*0.17, M+CW*0.5, M+CW*0.83];
+  const lbls = ['DÍA','MES','AÑO'];
+  const vals = [n.dd, n.mm, n.ar];
+  cols.forEach((cx,i) => {
+    doc.setFontSize(7); doc.setTextColor(...MUTED);
+    doc.text(lbls[i], cx, y+7, {align:'center'});
+    doc.setFontSize(22); doc.setTextColor(isMaster(vals[i])?MASTER[0]:GOLD[0], isMaster(vals[i])?MASTER[1]:GOLD[1], isMaster(vals[i])?MASTER[2]:GOLD[2]);
+    doc.text(String(vals[i]), cx, y+22, {align:'center'});
+  });
+  doc.setFontSize(18); doc.setTextColor(...GOLD);
+  doc.text('·', M+CW*0.335, y+22, {align:'center'});
+  doc.text('·', M+CW*0.665, y+22, {align:'center'});
+  y += 34;
+
+  // Emocionales / Anclaje
+  doc.setFontSize(7); doc.setTextColor(...MUTED);
+  doc.text('EMOCIONALES', M+CW*0.28, y, {align:'center'});
+  doc.text('ANCLAJE', M+CW*0.72, y, {align:'center'});
+  y += 5;
+  doc.setFontSize(16); doc.setTextColor(...DEEP);
+  doc.text(n.d7+' · '+n.d8, M+CW*0.28, y, {align:'center'});
+  doc.text(String(n.d9), M+CW*0.72, y, {align:'center'});
+  y += 8;
+  doc.setDrawColor(...GOLD); doc.setLineWidth(0.2);
+  doc.line(M+20, y, W-M-20, y); y += 7;
+
+  // Maestros
+  if (maestros.length > 0) {
+    doc.setFillColor(255,240,240); doc.setDrawColor(...MASTER); doc.setLineWidth(0.3);
+    doc.roundedRect(M+10, y, CW-20, 9, 2, 2, 'FD');
+    doc.setFontSize(8); doc.setTextColor(...MASTER);
+    doc.text('✦ '+(maestros.length>1?'Números maestros':'Número maestro')+': '+maestros.join(' · '), W/2, y+6, {align:'center'});
+    y += 14;
+    doc.setDrawColor(...GOLD); doc.setLineWidth(0.2);
+    doc.line(M+20, y, W-M-20, y); y += 7;
+  }
+
+  // Destino
+  doc.setFillColor(240,236,252); doc.setDrawColor(...GOLD); doc.setLineWidth(0.4);
+  doc.roundedRect(M, y, CW, 22, 3, 3, 'FD');
+  doc.setFontSize(7); doc.setTextColor(...MUTED);
+  doc.text('NÚMERO DE DESTINO', W/2, y+7, {align:'center'});
+  doc.setFontSize(20); doc.setTextColor(isMaster(n.d10)?MASTER[0]:GOLD[0], isMaster(n.d10)?MASTER[1]:GOLD[1], isMaster(n.d10)?MASTER[2]:GOLD[2]);
+  doc.text(String(n.d10), W/2, y+18, {align:'center'});
+  y += 28;
+
+  doc.setDrawColor(...GOLD); doc.setLineWidth(0.2);
+  doc.line(M+20, y, W-M-20, y); y += 8;
+
+  // Lectura
+  doc.setFontSize(7); doc.setTextColor(...GOLD);
+  doc.text('TU LECTURA NUMEROLÓGICA', M, y); y += 6;
+
+  const cleanMain = interpTextoMain.replace(/^#+\s*/gm,'').replace(/\*\*/g,'').replace(/<[^>]+>/g,'');
+  doc.setFontSize(10); doc.setTextColor(...DEEP); doc.setFont('helvetica','normal');
+  cleanMain.split('\n').filter(p=>p.trim()).forEach(para => {
+    const lines = doc.splitTextToSize(para, CW);
+    if (y + lines.length*5 > 270) { doc.addPage(); y = M; }
+    doc.text(lines, M, y); y += lines.length*5 + 4;
+  });
+
+  y += 4;
+  doc.setDrawColor(...GOLD); doc.setLineWidth(0.2);
+  doc.line(M+20, y, W-M-20, y); y += 8;
+
+  // Destino texto
+  doc.setFillColor(234,232,245); doc.setDrawColor(...GOLD); doc.setLineWidth(0.3);
+  const destLines = doc.splitTextToSize(interpTextoDest.replace(/^#+\s*/gm,'').replace(/\*\*/g,'').replace(/<[^>]+>/g,''), CW-10);
+  doc.roundedRect(M, y, CW, destLines.length*5+16, 3, 3, 'FD');
+  doc.setFontSize(7); doc.setTextColor(...MUTED);
+  doc.text('DESTINO · '+n.d10, M+5, y+7);
+  doc.setFontSize(10); doc.setTextColor(...DEEP);
+  doc.text(destLines, M+5, y+13); y += destLines.length*5 + 22;
+
+  // Pie
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let i=1; i<=totalPages; i++) {
+    doc.setPage(i);
+    doc.setDrawColor(...GOLD); doc.setLineWidth(0.2);
+    doc.line(M, 282, W-M, 282);
+    doc.setFontSize(8); doc.setTextColor(...MUTED);
+    doc.text('David Gil · Numerología Esencial · numerologia-david-gil.vercel.app', W/2, 287, {align:'center'});
+  }
+
+  doc.save('mi-lectura-numerologica.pdf');
 }
 </script>
 </body>
