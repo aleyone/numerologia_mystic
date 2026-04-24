@@ -728,176 +728,230 @@ async function compartirWhatsApp() {
   const n = currentNumbers;
   const maestros = [...new Set([n.dd,n.mm,n.ar,n.d4,n.d5,n.d6,n.d7,n.d8,n.d9].filter(isMaster))];
 
-  // Generar tarjeta
+  const W = 1080;
   const canvas = document.createElement('canvas');
-  canvas.width = 1080; canvas.height = 1350;
   const ctx = canvas.getContext('2d');
 
-  // Fondo azul noche
-  const grad = ctx.createLinearGradient(0, 0, 0, 1350);
-  grad.addColorStop(0, '#0D1B2A');
-  grad.addColorStop(0.5, '#112236');
-  grad.addColorStop(1, '#0A1520');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 1080, 1350);
-
-  // Textura sutil — puntos dorados
-  ctx.fillStyle = 'rgba(201,168,76,0.04)';
-  for (let i = 0; i < 120; i++) {
+  // ── Helpers ──
+  function sepLine(y) {
+    const g = ctx.createLinearGradient(W*0.15, 0, W*0.85, 0);
+    g.addColorStop(0, 'transparent');
+    g.addColorStop(0.5, 'rgba(201,168,76,0.45)');
+    g.addColorStop(1, 'transparent');
+    ctx.strokeStyle = g; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(W*0.15, y); ctx.lineTo(W*0.85, y); ctx.stroke();
+  }
+  function roundRect(x, y, w, h, r, fill, stroke, lw) {
     ctx.beginPath();
-    ctx.arc(Math.random()*1080, Math.random()*1350, Math.random()*2+0.5, 0, Math.PI*2);
+    ctx.moveTo(x+r, y);
+    ctx.lineTo(x+w-r, y); ctx.arcTo(x+w, y, x+w, y+r, r);
+    ctx.lineTo(x+w, y+h-r); ctx.arcTo(x+w, y+h, x+w-r, y+h, r);
+    ctx.lineTo(x+r, y+h); ctx.arcTo(x, y+h, x, y+h-r, r);
+    ctx.lineTo(x, y+r); ctx.arcTo(x, y, x+r, y, r);
+    ctx.closePath();
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw||1; ctx.stroke(); }
+  }
+  function wrapText(text, x, maxW, lineH) {
+    const words = text.split(' ');
+    let line = '', lines = [];
+    for (const w of words) {
+      const test = line + (line?' ':'')+w;
+      if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; }
+      else line = test;
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  // ── Calcular altura dinámica ──
+  // Estimamos el contenido para fijar la altura del canvas
+  let estimatedH = 180; // header
+  estimatedH += 180;    // nums
+  estimatedH += 40;     // sep
+  estimatedH += 100;    // emo/anclaje
+  estimatedH += 40;     // sep
+  if (maestros.length > 0) estimatedH += 80; // pill
+  estimatedH += 40;     // sep
+  estimatedH += 160;    // destino box
+  estimatedH += 40;     // sep
+  // extracto: calcular líneas
+  ctx.font = 'italic 300 30px Georgia, serif';
+  const extractText = interpTextoMain ? interpTextoMain.replace(/<[^>]+>/g,'').split('\n').filter(p=>p.trim()).slice(0,2).join(' ') : '';
+  const extractLines = extractText ? wrapText(extractText, 0, W*0.78, 46) : [];
+  estimatedH += extractLines.length * 46 + 80;
+  estimatedH += 80; // footer
+
+  canvas.width = W;
+  canvas.height = estimatedH;
+
+  // ── Fondo ──
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, estimatedH);
+  bgGrad.addColorStop(0, '#0D1B2A');
+  bgGrad.addColorStop(0.5, '#112236');
+  bgGrad.addColorStop(1, '#0A1520');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, estimatedH);
+
+  // Puntitos decorativos
+  ctx.fillStyle = 'rgba(201,168,76,0.04)';
+  for (let i = 0; i < 150; i++) {
+    ctx.beginPath();
+    ctx.arc(Math.random()*W, Math.random()*estimatedH, Math.random()*2+0.5, 0, Math.PI*2);
     ctx.fill();
   }
 
-  // Marco dorado exterior
-  ctx.strokeStyle = 'rgba(201,168,76,0.5)';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(28, 28, 1024, 1294);
+  // ── Borde exterior dorado ──
+  roundRect(22, 22, W-44, estimatedH-44, 16, null, 'rgba(201,168,76,0.55)', 2);
+  // Borde interior fino
+  roundRect(36, 36, W-72, estimatedH-72, 12, null, 'rgba(201,168,76,0.15)', 1);
 
-  // Marco dorado interior fino
-  ctx.strokeStyle = 'rgba(201,168,76,0.2)';
-  ctx.lineWidth = 1;
-  ctx.strokeRect(40, 40, 1000, 1270);
-
-  // Ornamento superior
+  // ── Estrellas en las 4 esquinas ──
   ctx.fillStyle = '#C9A84C';
-  ctx.font = '400 26px Jost, sans-serif';
+  ctx.font = '500 28px Georgia, serif';
   ctx.textAlign = 'center';
-  ctx.fillText('✦ NUMEROLOGÍA ESENCIAL ✦', 540, 110);
+  ctx.textBaseline = 'middle';
+  ctx.fillText('✦', 22, 22);
+  ctx.fillText('✦', W-22, 22);
+  ctx.fillText('✦', 22, estimatedH-22);
+  ctx.fillText('✦', W-22, estimatedH-22);
 
-  // Línea dorada
-  const lg = ctx.createLinearGradient(200, 0, 880, 0);
-  lg.addColorStop(0, 'transparent');
-  lg.addColorStop(0.5, 'rgba(201,168,76,0.8)');
-  lg.addColorStop(1, 'transparent');
-  ctx.strokeStyle = lg;
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(200, 135); ctx.lineTo(880, 135); ctx.stroke();
-
-  // Título
-  ctx.fillStyle = '#F0D898';
-  ctx.font = '300 54px "Cormorant Garamond", Georgia, serif';
-  ctx.fillText('Mi Pináculo Numerológico', 540, 210);
-
-  // Línea separadora
-  ctx.strokeStyle = lg;
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(200, 240); ctx.lineTo(880, 240); ctx.stroke();
-
-  // Etiquetas DD MM AR
-  ctx.fillStyle = 'rgba(201,168,76,0.7)';
-  ctx.font = '500 22px Jost, sans-serif';
-  ctx.letterSpacing = '3px';
-  ctx.fillText('DÍA', 270, 310);
-  ctx.fillText('MES', 540, 310);
-  ctx.fillText('AÑO', 810, 310);
-
-  // Números principales DD MM AR
+  // ── Ornamento superior ──
   ctx.fillStyle = '#C9A84C';
-  ctx.font = `600 ${n.dd>=10?'120':'130'}px "Cormorant Garamond", Georgia, serif`;
-  ctx.fillText(n.dd, 270, 430);
-  ctx.font = `600 ${n.mm>=10?'120':'130'}px "Cormorant Garamond", Georgia, serif`;
-  ctx.fillText(n.mm, 540, 430);
-  ctx.font = `600 ${n.ar>=10?'110':'120'}px "Cormorant Garamond", Georgia, serif`;
-  ctx.fillText(n.ar, 810, 430);
+  ctx.font = '400 24px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('✦ NUMEROLOGÍA ESENCIAL ✦', W/2, 90);
 
-  // Separadores entre números
-  ctx.fillStyle = 'rgba(201,168,76,0.4)';
-  ctx.font = '300 60px "Cormorant Garamond", Georgia, serif';
-  ctx.fillText('·', 405, 420);
-  ctx.fillText('·', 675, 420);
+  // Línea
+  sepLine(120);
 
-  // Línea separadora
-  ctx.strokeStyle = lg;
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(200, 480); ctx.lineTo(880, 480); ctx.stroke();
+  // ── Título ──
+  ctx.fillStyle = '#F0D898';
+  ctx.font = '300 60px Georgia, serif';
+  ctx.fillText('Mi Pináculo Numerológico', W/2, 185);
 
-  // Maestros si los hay
-  let yPos = 540;
-  if (maestros.length > 0) {
-    // Fondo pill para maestros
-    ctx.fillStyle = 'rgba(201,76,76,0.15)';
-    ctx.strokeStyle = 'rgba(201,76,76,0.5)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.roundRect(240, yPos-32, 600, 56, 28);
-    ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#E88080';
-    ctx.font = '500 24px Jost, sans-serif';
-    ctx.fillText('✦ ' + (maestros.length>1?'Números maestros':'Número maestro') + ': ' + maestros.join(' · '), 540, yPos+2);
-    yPos += 90;
-  }
+  // Línea
+  sepLine(218);
 
-  // Emocionales y Anclaje
-  ctx.fillStyle = 'rgba(201,168,76,0.5)';
-  ctx.font = '400 20px Jost, sans-serif';
+  // ── Día · Mes · Año ──
+  const numY = 330;
+  const cols = [W*0.25, W*0.5, W*0.75];
+  const labels = ['DÍA','MES','AÑO'];
+  const vals = [n.dd, n.mm, n.ar];
+
+  cols.forEach((cx, i) => {
+    ctx.fillStyle = 'rgba(201,168,76,0.6)';
+    ctx.font = '500 22px Georgia, serif';
+    ctx.letterSpacing = '3px';
+    ctx.fillText(labels[i], cx, numY - 80);
+    ctx.letterSpacing = '0px';
+    ctx.fillStyle = '#C9A84C';
+    ctx.font = `400 ${vals[i]>=10?'130':'140'}px Georgia, serif`;
+    ctx.fillText(vals[i], cx, numY);
+  });
+
+  // Puntos separadores
+  ctx.fillStyle = 'rgba(201,168,76,0.35)';
+  ctx.font = '300 60px Georgia, serif';
+  ctx.fillText('·', W*0.375, numY - 10);
+  ctx.fillText('·', W*0.625, numY - 10);
+
+  let curY = numY + 70;
+  sepLine(curY); curY += 55;
+
+  // ── Emocionales / Anclaje ──
+  ctx.fillStyle = 'rgba(201,168,76,0.55)';
+  ctx.font = '500 22px Georgia, serif';
   ctx.letterSpacing = '2px';
-  ctx.fillText('EMOCIONALES', 320, yPos);
-  ctx.fillText('ANCLAJE', 760, yPos);
-  yPos += 50;
+  ctx.fillText('EMOCIONALES', W*0.3, curY);
+  ctx.fillText('ANCLAJE', W*0.72, curY);
+  ctx.letterSpacing = '0px';
+  curY += 15;
 
   ctx.fillStyle = '#E8E4FF';
-  ctx.font = '600 64px "Cormorant Garamond", Georgia, serif';
-  ctx.fillText(n.d7 + ' · ' + n.d8, 320, yPos);
-  ctx.fillText(n.d9, 760, yPos);
-  yPos += 60;
+  ctx.font = '300 72px Georgia, serif';
+  ctx.fillText(n.d7+' · '+n.d8, W*0.3, curY + 72);
+  ctx.fillText(n.d9, W*0.72, curY + 72);
+  curY += 110;
 
-  // Línea separadora
-  ctx.strokeStyle = lg;
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(200, yPos); ctx.lineTo(880, yPos); ctx.stroke();
-  yPos += 60;
+  sepLine(curY); curY += 45;
 
-  // Bloque Destino
-  ctx.fillStyle = 'rgba(201,168,76,0.12)';
-  ctx.strokeStyle = 'rgba(201,168,76,0.4)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.roundRect(180, yPos-20, 720, 160, 16);
-  ctx.fill(); ctx.stroke();
-
-  ctx.fillStyle = 'rgba(201,168,76,0.7)';
-  ctx.font = '500 20px Jost, sans-serif';
-  ctx.letterSpacing = '3px';
-  ctx.fillText('NÚMERO DE DESTINO', 540, yPos+30);
-
-  ctx.fillStyle = '#C9A84C';
-  ctx.font = '600 90px "Cormorant Garamond", Georgia, serif';
-  ctx.fillText(n.d10, 540, yPos+120);
-  yPos += 200;
-
-  // Preview interpretación
-  if (interpTextoMain) {
-    ctx.strokeStyle = lg;
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(200, yPos); ctx.lineTo(880, yPos); ctx.stroke();
-    yPos += 50;
-
-    const preview = interpTextoMain.replace(/<[^>]+>/g,'').split('\n').filter(p=>p.trim())[0]||'';
-    ctx.fillStyle = 'rgba(240,216,152,0.7)';
-    ctx.font = 'italic 300 28px "Cormorant Garamond", Georgia, serif';
-    const words = preview.split(' ');
-    let line='', lines=[];
-    for (const w of words) {
-      const test = line+(line?' ':'')+w;
-      if (ctx.measureText(test).width > 840 && line) { lines.push(line); line=w; if(lines.length>=3) break; }
-      else line=test;
-    }
-    if (line && lines.length<3) lines.push(line);
-    lines.forEach((l,i) => ctx.fillText((i===lines.length-1&&lines.length===3?l+'…':l), 540, yPos+i*40));
-    yPos += lines.length*40 + 20;
+  // ── Maestros (si los hay) ──
+  if (maestros.length > 0) {
+    const pillW = 560, pillH = 56, pillX = (W-pillW)/2, pillY = curY;
+    roundRect(pillX, pillY, pillW, pillH, 28, 'rgba(180,60,60,0.18)', 'rgba(200,80,80,0.5)', 1.5);
+    ctx.fillStyle = '#E88080';
+    ctx.font = '400 24px Georgia, serif';
+    ctx.fillText('✦ ' + (maestros.length>1?'Números maestros':'Número maestro') + ': ' + maestros.join(' · '), W/2, pillY + 33);
+    curY += pillH + 45;
+    sepLine(curY); curY += 45;
   }
 
-  // Pie
-  ctx.strokeStyle = lg;
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(200, 1260); ctx.lineTo(880, 1260); ctx.stroke();
-  ctx.fillStyle = '#C9A84C';
-  ctx.font = '400 22px Jost, sans-serif';
-  ctx.letterSpacing = '1px';
-  ctx.fillText('David Gil · numerologia-david-gil.vercel.app', 540, 1305);
+  // ── Bloque Destino ──
+  const destBoxW = W * 0.82;
+  const destBoxX = (W - destBoxW) / 2;
+  const destBoxH = 150;
+  roundRect(destBoxX, curY, destBoxW, destBoxH, 14, 'rgba(201,168,76,0.1)', 'rgba(201,168,76,0.45)', 1.5);
 
-  // Compartir con Web Share API o descargar
+  ctx.fillStyle = 'rgba(201,168,76,0.6)';
+  ctx.font = '500 21px Georgia, serif';
+  ctx.letterSpacing = '3px';
+  ctx.fillText('NÚMERO DE DESTINO', W/2, curY + 42);
+  ctx.letterSpacing = '0px';
+
+  ctx.fillStyle = '#C9A84C';
+  ctx.font = `400 ${n.d10>=100?'72':'88'}px Georgia, serif`;
+  ctx.fillText(n.d10, W/2, curY + 125);
+  curY += destBoxH + 45;
+
+  sepLine(curY); curY += 45;
+
+  // ── Extracto de interpretación ──
+  if (extractLines.length > 0) {
+    const exPadX = W * 0.11;
+    const exW = W * 0.78;
+    const lineH = 46;
+    const exH = extractLines.length * lineH + 50;
+    const exX = exPadX;
+    const exY = curY;
+    const cornerLen = 36;
+
+    // Esquina arriba-derecha
+    ctx.strokeStyle = 'rgba(232,228,255,0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(exX+exW-cornerLen, exY); ctx.lineTo(exX+exW, exY); ctx.lineTo(exX+exW, exY+cornerLen); ctx.stroke();
+    // Esquina abajo-izquierda
+    ctx.beginPath(); ctx.moveTo(exX+cornerLen, exY+exH); ctx.lineTo(exX, exY+exH); ctx.lineTo(exX, exY+exH-cornerLen); ctx.stroke();
+
+    ctx.fillStyle = 'rgba(240,216,152,0.65)';
+    ctx.font = 'italic 300 29px Georgia, serif';
+    extractLines.forEach((line, i) => {
+      ctx.fillText(line, W/2, exY + 34 + i*lineH);
+    });
+    curY += exH + 30;
+  }
+
+  sepLine(curY); curY += 40;
+
+  // ── Pie ──
+  ctx.fillStyle = 'rgba(201,168,76,0.6)';
+  ctx.font = '400 22px Georgia, serif';
+  ctx.fillText('David Gil · numerologia-david-gil.vercel.app', W/2, curY + 20);
+
+  // Ajustar altura real del canvas
+  const finalH = curY + 65;
+  if (finalH !== estimatedH) {
+    // Redibujar con altura correcta
+    canvas.height = finalH;
+    // Rellenar fondo de nuevo (el resize limpia el canvas)
+    const bg2 = ctx.createLinearGradient(0, 0, 0, finalH);
+    bg2.addColorStop(0, '#0D1B2A');
+    bg2.addColorStop(0.5, '#112236');
+    bg2.addColorStop(1, '#0A1520');
+    ctx.fillStyle = bg2; ctx.fillRect(0, 0, W, finalH);
+  }
+
+  // ── Compartir ──
   canvas.toBlob(async blob => {
     const file = new File([blob], 'mi-pinaculo-numerologico.png', {type:'image/png'});
     let msg = '✦ Mi Pináculo Numerológico\n\nDía: '+n.dd+' · Mes: '+n.mm+' · Año: '+n.ar+'\n';
@@ -905,12 +959,9 @@ async function compartirWhatsApp() {
     msg += 'Emocionales: '+n.d7+' · '+n.d8+'\nAnclaje: '+n.d9+'\nDestino: '+n.d10+'\n\nDescubre el tuyo → https://numerologia-david-gil.vercel.app/';
 
     if (navigator.canShare && navigator.canShare({files:[file]})) {
-      try {
-        await navigator.share({ files:[file], text: msg });
-        return;
-      } catch(e) {}
+      try { await navigator.share({files:[file], text:msg}); return; } catch(e) {}
     }
-    // Fallback desktop: descargar imagen
+    // Fallback desktop
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href=url; a.download='mi-pinaculo-numerologico.png'; a.click();
