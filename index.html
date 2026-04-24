@@ -730,6 +730,17 @@ document.getElementById('birthdate').addEventListener('keydown', e=>{if(e.key===
 async function compartirWhatsApp() {
   if (!document.getElementById('btn-share').classList.contains('ready')) return;
 
+  // Cargar Cormorant Garamond si no está disponible en canvas
+  try {
+    const fontRegular = new FontFace('CormorantCanvas', 'url(https://fonts.gstatic.com/s/cormorantgaramond/v22/co3YmX5slCNuHLi8bLeY9MK7whWMhyjornFLsS6V7w.woff2)', {weight:'400',style:'normal'});
+    const fontItalic  = new FontFace('CormorantCanvas', 'url(https://fonts.gstatic.com/s/cormorantgaramond/v22/co3WmX5slCNuHLi8bLeY9MK7whWMhyjYrEtHsS6V7w.woff2)', {weight:'400',style:'italic'});
+    await Promise.all([fontRegular.load(), fontItalic.load()]);
+    document.fonts.add(fontRegular);
+    document.fonts.add(fontItalic);
+  } catch(e) { /* fallback a Georgia */ }
+
+  const FONT = document.fonts.check('16px CormorantCanvas') ? 'CormorantCanvas' : 'Georgia';
+
   const n = currentNumbers;
   const maestros = [...new Set([n.dd,n.mm,n.ar,n.d4,n.d5,n.d6,n.d7,n.d8,n.d9].filter(isMaster))];
 
@@ -773,7 +784,7 @@ async function compartirWhatsApp() {
   const extractText = interpSintesis
     ? interpSintesis.replace(/^#+\s*/gm,'').replace(/\*\*/g,'').replace(/<[^>]+>/g,'').trim()
     : '';
-  ctx.font = 'italic 300 29px Georgia, serif';
+  ctx.font = `italic 300 29px ${FONT}, serif`;
   const extractLines = extractText ? wrapText(ctx, extractText, W*0.78) : [];
   const lineH = 46;
 
@@ -811,41 +822,41 @@ async function compartirWhatsApp() {
   roundRect(ctx,36,36,W-72,H-72,12,null,'rgba(201,168,76,0.15)',1);
 
   // ── Estrellas esquinas ──
-  ctx.fillStyle='#C9A84C'; ctx.font='500 28px Georgia,serif';
+  ctx.fillStyle='#C9A84C'; ctx.font=`500 28px ${FONT},serif`;
   ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText('✦',22,22); ctx.fillText('✦',W-22,22);
   ctx.fillText('✦',22,H-22); ctx.fillText('✦',W-22,H-22);
 
   // ── Ornamento ──
-  ctx.fillStyle='#C9A84C'; ctx.font='400 24px Georgia,serif';
+  ctx.fillStyle='#C9A84C'; ctx.font=`400 24px ${FONT},serif`;
   ctx.textAlign='center'; ctx.textBaseline='alphabetic';
   ctx.fillText('✦ NUMEROLOGÍA ESENCIAL ✦',W/2,90);
   sepLine(ctx,118,W);
 
   // ── Título ──
-  ctx.fillStyle='#F0D898'; ctx.font='300 58px Georgia,serif';
+  ctx.fillStyle='#F0D898'; ctx.font=`300 58px ${FONT},serif`;
   ctx.fillText('Mi Pináculo Numerológico',W/2,192);
   sepLine(ctx,218,W);
 
   // ── Números DD/MM/AR ──
   const numY=350;
   [[W*0.25,'DÍA',n.dd],[W*0.5,'MES',n.mm],[W*0.75,'AÑO',n.ar]].forEach(([cx,lbl,val])=>{
-    ctx.fillStyle='rgba(201,168,76,0.6)'; ctx.font='500 21px Georgia,serif';
+    ctx.fillStyle='rgba(201,168,76,0.6)'; ctx.font=`500 21px ${FONT},serif`;
     ctx.fillText(lbl,cx,numY-85);
-    ctx.fillStyle='#C9A84C'; ctx.font=`400 ${val>=10?'125':'138'}px Georgia,serif`;
+    ctx.fillStyle='#C9A84C'; ctx.font=`400 ${val>=10?'125':'138'}px ${FONT},serif`;
     ctx.fillText(val,cx,numY);
   });
-  ctx.fillStyle='rgba(201,168,76,0.35)'; ctx.font='300 55px Georgia,serif';
+  ctx.fillStyle='rgba(201,168,76,0.35)'; ctx.font=`300 55px ${FONT},serif`;
   ctx.fillText('·',W*0.375,numY-15); ctx.fillText('·',W*0.625,numY-15);
 
   let y = numY+68;
   sepLine(ctx,y,W); y+=55;
 
   // ── Emocionales / Anclaje ──
-  ctx.fillStyle='rgba(201,168,76,0.55)'; ctx.font='500 21px Georgia,serif';
+  ctx.fillStyle='rgba(201,168,76,0.55)'; ctx.font=`500 21px ${FONT},serif`;
   ctx.fillText('EMOCIONALES',W*0.3,y);
   ctx.fillText('ANCLAJE',W*0.72,y); y+=15;
-  ctx.fillStyle='#E8E4FF'; ctx.font='300 70px Georgia,serif';
+  ctx.fillStyle='#E8E4FF'; ctx.font=`300 70px ${FONT},serif`;
   ctx.fillText(n.d7+' · '+n.d8,W*0.3,y+70);
   ctx.fillText(n.d9,W*0.72,y+70); y+=105;
   sepLine(ctx,y,W); y+=45;
@@ -854,7 +865,7 @@ async function compartirWhatsApp() {
   if(maestros.length>0){
     const pW=560,pH=56,pX=(W-pW)/2;
     roundRect(ctx,pX,y,pW,pH,28,'rgba(180,60,60,0.18)','rgba(200,80,80,0.5)',1.5);
-    ctx.fillStyle='#E88080'; ctx.font='400 23px Georgia,serif';
+    ctx.fillStyle='#E88080'; ctx.font=`400 23px ${FONT},serif`;
     ctx.fillText('✦ '+(maestros.length>1?'Números maestros':'Número maestro')+': '+maestros.join(' · '),W/2,y+33);
     y+=pH+45; sepLine(ctx,y,W); y+=45;
   }
@@ -862,9 +873,9 @@ async function compartirWhatsApp() {
   // ── Destino ──
   const dW=W*0.82,dX=(W-dW)/2,dH=148;
   roundRect(ctx,dX,y,dW,dH,14,'rgba(201,168,76,0.1)','rgba(201,168,76,0.45)',1.5);
-  ctx.fillStyle='rgba(201,168,76,0.6)'; ctx.font='500 20px Georgia,serif';
+  ctx.fillStyle='rgba(201,168,76,0.6)'; ctx.font=`500 20px ${FONT},serif`;
   ctx.fillText('NÚMERO DE DESTINO',W/2,y+40);
-  ctx.fillStyle='#C9A84C'; ctx.font=`400 ${n.d10>=100?'70':'86'}px Georgia,serif`;
+  ctx.fillStyle='#C9A84C'; ctx.font=`400 ${n.d10>=100?'70':'86'}px ${FONT},serif`;
   ctx.fillText(n.d10,W/2,y+122); y+=dH+45;
   sepLine(ctx,y,W); y+=45;
 
@@ -876,13 +887,13 @@ async function compartirWhatsApp() {
     ctx.beginPath();ctx.moveTo(exX+exW-cl,y);ctx.lineTo(exX+exW,y);ctx.lineTo(exX+exW,y+cl);ctx.stroke();
     // Esquina abajo-izquierda
     ctx.beginPath();ctx.moveTo(exX+cl,y+exH);ctx.lineTo(exX,y+exH);ctx.lineTo(exX,y+exH-cl);ctx.stroke();
-    ctx.fillStyle='rgba(240,216,152,0.65)'; ctx.font='italic 300 29px Georgia,serif';
+    ctx.fillStyle='rgba(240,216,152,0.65)'; ctx.font=`italic 300 29px ${FONT},serif`;
     extractLines.forEach((l,i)=>ctx.fillText(l,W/2,y+32+i*lineH));
     y+=exH+30; sepLine(ctx,y,W); y+=38;
   }
 
   // ── Pie ──
-  ctx.fillStyle='rgba(201,168,76,0.6)'; ctx.font='400 21px Georgia,serif';
+  ctx.fillStyle='rgba(201,168,76,0.6)'; ctx.font=`400 21px ${FONT},serif`;
   ctx.fillText('David Gil · numerologia-david-gil.vercel.app',W/2,y+22);
 
   // ── Compartir ──
