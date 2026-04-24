@@ -730,13 +730,14 @@ document.getElementById('birthdate').addEventListener('keydown', e=>{if(e.key===
 async function compartirWhatsApp() {
   if (!document.getElementById('btn-share').classList.contains('ready')) return;
 
-  // Cargar Cormorant Garamond si no está disponible en canvas
+  // Cargar Cormorant Garamond y esperar a que esté lista
   try {
     const fontRegular = new FontFace('CormorantCanvas', 'url(https://fonts.gstatic.com/s/cormorantgaramond/v22/co3YmX5slCNuHLi8bLeY9MK7whWMhyjornFLsS6V7w.woff2)', {weight:'400',style:'normal'});
     const fontItalic  = new FontFace('CormorantCanvas', 'url(https://fonts.gstatic.com/s/cormorantgaramond/v22/co3WmX5slCNuHLi8bLeY9MK7whWMhyjYrEtHsS6V7w.woff2)', {weight:'400',style:'italic'});
-    await Promise.all([fontRegular.load(), fontItalic.load()]);
-    document.fonts.add(fontRegular);
-    document.fonts.add(fontItalic);
+    const [fr, fi] = await Promise.all([fontRegular.load(), fontItalic.load()]);
+    document.fonts.add(fr);
+    document.fonts.add(fi);
+    await document.fonts.ready;
   } catch(e) { /* fallback a Georgia */ }
 
   const FONT = document.fonts.check('16px CormorantCanvas') ? 'CormorantCanvas' : 'Georgia';
