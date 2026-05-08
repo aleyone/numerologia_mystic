@@ -935,148 +935,127 @@ function generarPDF() {
   const n = currentNumbers;
   const maestros = [...new Set([n.dd,n.mm,n.ar,n.d4,n.d5,n.d6,n.d7,n.d8,n.d9].filter(isMaster))];
   const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-  const W = 210, M = 18, CW = W - M*2;
+  const W = 210, M = 16, CW = W - M*2;
 
-  // Colores
-  const GOLD   = [201,168,76];
-  const DEEP   = [26,22,48];
-  const INDIGO = [74,63,138];
-  const MUTED  = [107,100,144];
-  const MASTER = [201,76,76];
+  const GOLD  = [180,140,50];
+  const GOLD2 = [201,168,76];
+  const DEEP  = [26,22,48];
+  const MUTED = [107,100,144];
+  const MASTER= [180,60,60];
+  const LIGHT = [234,232,245];
+
+  function sep(y) {
+    doc.setDrawColor(...GOLD2); doc.setLineWidth(0.3);
+    doc.line(M+15, y, W-M-15, y);
+  }
 
   let y = M;
 
-  // Cabecera
-  doc.setFontSize(8); doc.setTextColor(...GOLD);
-  doc.text('* NUMEROLOGIA ESENCIAL *', W/2, y, {align:'center'});
-  y += 5;
-  doc.setDrawColor(...GOLD); doc.setLineWidth(0.3);
-  doc.line(M+20, y, W-M-20, y); y += 8;
+  // Borde superior
+  doc.setDrawColor(...GOLD2); doc.setLineWidth(0.5);
+  doc.line(M, y, W-M, y); y += 6;
 
-  doc.setFontSize(22); doc.setTextColor(...DEEP);
-  doc.setFont('helvetica','normal');
-  doc.text('Tu Pináculo Numerológico', W/2, y, {align:'center'});
-  y += 4;
-  doc.setDrawColor(...GOLD); doc.setLineWidth(0.3);
-  doc.line(M+20, y, W-M-20, y); y += 10;
+  // Ornamento
+  doc.setFontSize(8); doc.setTextColor(...GOLD); doc.setFont("helvetica","normal");
+  doc.text("NUMEROLOGIA ESENCIAL  -  David Gil", W/2, y, {align:"center"});
+  y += 4; sep(y); y += 7;
 
-  // Números DD/MM/AR
-  doc.setFillColor(234,232,245); doc.setDrawColor(...GOLD); doc.setLineWidth(0.3);
-  doc.roundedRect(M, y, CW, 28, 3, 3, 'FD');
-  const cols = [M+CW*0.17, M+CW*0.5, M+CW*0.83];
-  const lbls = ['DÍA','MES','AÑO'];
-  const vals = [n.dd, n.mm, n.ar];
-  cols.forEach((cx,i) => {
-    doc.setFontSize(7); doc.setTextColor(...MUTED);
-    doc.text(lbls[i], cx, y+7, {align:'center'});
-    doc.setFontSize(22); doc.setTextColor(isMaster(vals[i])?MASTER[0]:GOLD[0], isMaster(vals[i])?MASTER[1]:GOLD[1], isMaster(vals[i])?MASTER[2]:GOLD[2]);
-    doc.text(String(vals[i]), cx, y+22, {align:'center'});
+  // Titulo
+  doc.setFontSize(20); doc.setTextColor(...DEEP); doc.setFont("helvetica","normal");
+  doc.text("Tu Pinaculo Numerologico", W/2, y, {align:"center"});
+  y += 3; sep(y); y += 8;
+
+  // Bloque numeros DD MM AR
+  doc.setFillColor(...LIGHT); doc.setDrawColor(...GOLD2); doc.setLineWidth(0.3);
+  doc.roundedRect(M, y, CW, 30, 3, 3, "FD");
+  [[M+CW*0.17,"DIA",n.dd],[M+CW*0.5,"MES",n.mm],[M+CW*0.83,"ANO",n.ar]].forEach(([cx,lbl,val])=>{
+    doc.setFontSize(7); doc.setTextColor(...MUTED); doc.setFont("helvetica","normal");
+    doc.text(lbl, cx, y+8, {align:"center"});
+    const isM = isMaster(val);
+    doc.setFontSize(22); doc.setFont("helvetica","bold");
+    doc.setTextColor(isM?MASTER[0]:GOLD[0], isM?MASTER[1]:GOLD[1], isM?MASTER[2]:GOLD[2]);
+    doc.text(String(val), cx, y+24, {align:"center"});
   });
-  doc.setFontSize(18); doc.setTextColor(...GOLD);
-  doc.text('·', M+CW*0.335, y+22, {align:'center'});
-  doc.text('·', M+CW*0.665, y+22, {align:'center'});
-  y += 34;
+  doc.setFontSize(16); doc.setTextColor(...GOLD2); doc.setFont("helvetica","normal");
+  doc.text(".", M+CW*0.335, y+24, {align:"center"});
+  doc.text(".", M+CW*0.665, y+24, {align:"center"});
+  y += 36;
 
-  // Emocionales / Anclaje
-  doc.setFontSize(7); doc.setTextColor(...MUTED);
-  doc.text('EMOCIONALES', M+CW*0.28, y, {align:'center'});
-  doc.text('ANCLAJE', M+CW*0.72, y, {align:'center'});
-  y += 5;
-  doc.setFontSize(16); doc.setTextColor(...DEEP);
-  doc.text(n.d7+' · '+n.d8, M+CW*0.28, y, {align:'center'});
-  doc.text(String(n.d9), M+CW*0.72, y, {align:'center'});
-  y += 8;
-  doc.setDrawColor(...GOLD); doc.setLineWidth(0.2);
-  doc.line(M+20, y, W-M-20, y); y += 7;
+  // Emocionales Anclaje
+  doc.setFontSize(7); doc.setTextColor(...MUTED); doc.setFont("helvetica","normal");
+  doc.text("EMOCIONALES", M+CW*0.28, y, {align:"center"});
+  doc.text("ANCLAJE", M+CW*0.72, y, {align:"center"});
+  y += 6;
+  doc.setFontSize(16); doc.setTextColor(...DEEP); doc.setFont("helvetica","bold");
+  doc.text(n.d7+" . "+n.d8, M+CW*0.28, y, {align:"center"});
+  doc.text(String(n.d9), M+CW*0.72, y, {align:"center"});
+  y += 9; sep(y); y += 7;
 
   // Maestros
   if (maestros.length > 0) {
     doc.setFillColor(255,240,240); doc.setDrawColor(...MASTER); doc.setLineWidth(0.3);
-    doc.roundedRect(M+10, y, CW-20, 9, 2, 2, 'FD');
-    doc.setFontSize(8); doc.setTextColor(...MASTER);
-    doc.text((maestros.length>1?'Numeros maestros':'Numero maestro')+': '+maestros.join(' - '), W/2, y+6, {align:'center'});
-    y += 14;
-    doc.setDrawColor(...GOLD); doc.setLineWidth(0.2);
-    doc.line(M+20, y, W-M-20, y); y += 7;
+    doc.roundedRect(M+15, y, CW-30, 9, 2, 2, "FD");
+    doc.setFontSize(8); doc.setTextColor(...MASTER); doc.setFont("helvetica","bold");
+    doc.text((maestros.length>1?"Numeros maestros":"Numero maestro")+": "+maestros.join("  -  "), W/2, y+6, {align:"center"});
+    y += 14; sep(y); y += 7;
   }
 
-  // Destino
-  doc.setFillColor(240,236,252); doc.setDrawColor(...GOLD); doc.setLineWidth(0.4);
-  doc.roundedRect(M, y, CW, 22, 3, 3, 'FD');
-  doc.setFontSize(7); doc.setTextColor(...MUTED);
-  doc.text('NÚMERO DE DESTINO', W/2, y+7, {align:'center'});
-  doc.setFontSize(20); doc.setTextColor(isMaster(n.d10)?MASTER[0]:GOLD[0], isMaster(n.d10)?MASTER[1]:GOLD[1], isMaster(n.d10)?MASTER[2]:GOLD[2]);
-  doc.text(String(n.d10), W/2, y+18, {align:'center'});
-  y += 28;
-
-  doc.setDrawColor(...GOLD); doc.setLineWidth(0.2);
-  doc.line(M+20, y, W-M-20, y); y += 8;
-
   // Lectura
-  doc.setFontSize(7); doc.setTextColor(...GOLD);
-  doc.setFont('helvetica','bold');
-  doc.text('TU LECTURA NUMEROLOGICA', M, y); y += 6;
-  doc.setDrawColor(...GOLD); doc.setLineWidth(0.2);
-  doc.line(M, y, W-M, y); y += 6;
+  doc.setFontSize(7); doc.setTextColor(...GOLD); doc.setFont("helvetica","bold");
+  doc.text("TU LECTURA NUMEROLOGICA", M, y); y += 5;
 
-  // Limpiar markdown y quitar primer párrafo si es título generado por la IA
   const cleanMain = interpTextoMain
-    .replace(/^#+\s*/gm,'')
-    .replace(/\*\*/g,'')
-    .replace(/\*/g,'')
-    .replace(/<[^>]+>/g,'')
-    .trim();
+    .replace(/^#+\s*/gm,"").replace(/\*\*/g,"").replace(/\*/g,"")
+    .replace(/<[^>]+>/g,"").trim();
 
-  const paras = cleanMain.split('\n').filter(p=>p.trim()).filter((p,i)=>{
-    // Eliminar si el primer párrafo parece un título (menos de 60 chars y sin punto)
-    if (i===0 && p.length < 60 && !p.includes('.')) return false;
+  const paras = cleanMain.split("
+").filter(p=>p.trim()).filter((p,i)=>{
+    if (i===0 && p.length < 60 && !p.includes(".")) return false;
     return true;
   });
 
-  doc.setFont('helvetica','normal');
+  doc.setFont("helvetica","normal"); doc.setTextColor(...DEEP);
   paras.forEach(para => {
-    doc.setFontSize(10); doc.setTextColor(...DEEP);
+    doc.setFontSize(10);
     const lines = doc.splitTextToSize(para, CW);
-    if (y + lines.length*5.5 > 270) { doc.addPage(); y = M; }
-    // Texto justificado
-    doc.text(lines, M, y, {align:'justify', maxWidth: CW});
-    y += lines.length*5.5 + 5;
+    if (y + lines.length*5.5 > 272) { doc.addPage(); y = M; }
+    doc.text(lines, M, y, {align:"justify", maxWidth:CW});
+    y += lines.length*5.5 + 4;
   });
 
-  y += 4;
-  doc.setDrawColor(...GOLD); doc.setLineWidth(0.2);
-  doc.line(M+20, y, W-M-20, y); y += 8;
+  y += 3; sep(y); y += 7;
 
-  // Destino texto
+  // Destino
   const cleanDest = interpTextoDest
-    .replace(/^#+\s*/gm,'')
-    .replace(/\*\*/g,'')
-    .replace(/\*/g,'')
-    .replace(/<[^>]+>/g,'')
-    .trim();
+    .replace(/^#+\s*/gm,"").replace(/\*\*/g,"").replace(/\*/g,"")
+    .replace(/<[^>]+>/g,"").trim();
 
-  doc.setFillColor(234,232,245); doc.setDrawColor(...GOLD); doc.setLineWidth(0.3);
   const destLines = doc.splitTextToSize(cleanDest, CW-14);
-  const destBoxH = destLines.length*5.5 + 20;
-  if (y + destBoxH > 275) { doc.addPage(); y = M; }
-  doc.roundedRect(M, y, CW, destBoxH, 3, 3, 'FD');
-  doc.setFontSize(7); doc.setTextColor(...MUTED); doc.setFont('helvetica','bold');
-  doc.text('NUMERO DE DESTINO  ' + n.d10, M+7, y+8);
-  doc.setFontSize(10); doc.setTextColor(...DEEP); doc.setFont('helvetica','normal');
-  doc.text(destLines, M+7, y+15, {align:'justify', maxWidth: CW-14});
-  y += destBoxH + 8;
+  const destH = destLines.length*5.5 + 22;
+  if (y + destH > 272) { doc.addPage(); y = M; }
 
-  // Pie
+  doc.setFillColor(...LIGHT); doc.setDrawColor(...GOLD2); doc.setLineWidth(0.4);
+  doc.roundedRect(M, y, CW, destH, 3, 3, "FD");
+  doc.setFontSize(7); doc.setTextColor(...MUTED); doc.setFont("helvetica","bold");
+  doc.text("NUMERO DE DESTINO", M+7, y+8);
+  doc.setFontSize(18); doc.setFont("helvetica","bold");
+  doc.setTextColor(isMaster(n.d10)?MASTER[0]:GOLD[0], isMaster(n.d10)?MASTER[1]:GOLD[1], isMaster(n.d10)?MASTER[2]:GOLD[2]);
+  doc.text(String(n.d10), M+55, y+8);
+  doc.setFontSize(10); doc.setTextColor(...DEEP); doc.setFont("helvetica","normal");
+  doc.text(destLines, M+7, y+15, {align:"justify", maxWidth:CW-14});
+  y += destH + 6;
+
+  // Pie en todas las paginas
   const totalPages = doc.internal.getNumberOfPages();
   for (let i=1; i<=totalPages; i++) {
     doc.setPage(i);
-    doc.setDrawColor(...GOLD); doc.setLineWidth(0.2);
-    doc.line(M, 282, W-M, 282);
-    doc.setFontSize(8); doc.setTextColor(...MUTED); doc.setFont('helvetica','normal');
-    doc.text('David Gil  Numerologia Esencial  numerologia-david-gil.vercel.app', W/2, 287, {align:'center'});
+    doc.setDrawColor(...GOLD2); doc.setLineWidth(0.3);
+    doc.line(M, 284, W-M, 284);
+    doc.setFontSize(7); doc.setTextColor(...MUTED); doc.setFont("helvetica","normal");
+    doc.text("David Gil  -  Numerologia Esencial  -  numerologia-david-gil.vercel.app", W/2, 289, {align:"center"});
   }
 
-  doc.save('mi-lectura-numerologica.pdf');
+  doc.save("mi-lectura-numerologica.pdf");
 }
 </script>
 </body>
