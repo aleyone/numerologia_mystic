@@ -357,21 +357,11 @@ function lanzarAPI(){
   const n=currentNumbers,maestros=[n.dd,n.mm,n.ar,n.d4,n.d5,n.d6,n.d7,n.d8,n.d9].filter(v=>MASTERS.includes(v));
   const prompt=`Eres un numerólogo experto en el sistema de David Gil Pérez (Escuela Reconexión Consciente). Haz una lectura numerológica personalizada, narrativa, cálida y profunda, en español.
 
-REGLA FUNDAMENTAL: Cada número tiene su propia esencia única. A continuación te doy el significado exacto de cada número del pináculo de esta persona. Usa estos significados como base para construir una narrativa fluida y personal — no los repitas literalmente, transfórmalos en una historia íntima y esperanzadora.
+REGLA FUNDAMENTAL DEL SISTEMA: Cada número del pináculo es una vibración ÚNICA e INDEPENDIENTE. Los números de dos dígitos NO se reducen, NO se descomponen en sus cifras y NO se interpretan como ninguno de sus dígitos por separado. El 10 no tiene nada que ver con el 1 ni con el 0 — es el 10. El 16 no es el 1 ni el 6 ni el 7 — es el 16. El 23 no es el 2 ni el 3 ni el 5 — es el 23. Cada número del 1 al 99 tiene su propia esencia, su propio carácter, su propio relato.
 
-Números del pináculo y sus significados:
-- Día(DD): ${n.dd} — ${DESCRIPCIONES[n.dd]||'Vibración única'}
-- Mes(MM): ${n.mm} — ${DESCRIPCIONES[n.mm]||'Vibración única'}
-- Año reducido(AR): ${n.ar} — ${DESCRIPCIONES[n.ar]||'Vibración única'}
-- D4 ancestros izq: ${n.d4} — ${DESCRIPCIONES[n.d4]||'Vibración única'}
-- D5 ancestros der: ${n.d5} — ${DESCRIPCIONES[n.d5]||'Vibración única'}
-- D6 maestro cima: ${n.d6} — ${DESCRIPCIONES[n.d6]||'Vibración única'}
-- D7 emocional izq: ${n.d7} — ${DESCRIPCIONES[n.d7]||'Vibración única'}
-- D8 emocional der: ${n.d8} — ${DESCRIPCIONES[n.d8]||'Vibración única'}
-- D9 ancla tierra: ${n.d9} — ${DESCRIPCIONES[n.d9]||'Vibración única'}${maestros.length>0?'\n- MAESTROS presentes: '+maestros.map(m=>m+' — '+(DESCRIPCIONES[m]||'')).join(', '):''}
-
+Pináculo: Día(DD):${n.dd} el más importante, Mes(MM):${n.mm}, Año reducido(AR):${n.ar}, D4 ancestros izq:${n.d4}, D5 ancestros der:${n.d5}, D6 maestro cima:${n.d6}, D7 emocional izq:${n.d7}, D8 emocional der:${n.d8}, D9 ancla tierra:${n.d9}${maestros.length>0?', MAESTROS: '+maestros.join(','):''}.
 Escribe 3-4 párrafos narrativos: 1)esencia(DD,MM,AR) 2)ancestros y maestro(D4,D5,D6) 3)emocional y ancla(D7,D8,D9)${maestros.length>0?' 4)maestros':''}.
-Tono íntimo, esperanzador. Solo párrafos, sin títulos ni encabezados. NO menciones el Destino(${n.d10}).`;
+Tono íntimo, esperanzador. Solo párrafos. NO pongas títulos, subtítulos ni encabezados. NO menciones el Destino(${n.d10}).`;
   const promptDestino=`En la numerología de David Gil Pérez el Número de Destino es lo que la persona viene a depurar en esta vida. Destino: ${n.d10}. Escribe 2-3 frases íntimas y profundas. Tono esperanzador. Sin títulos.`;
   const promptSintesis=`A partir de esta lectura numerológica, escribe UN SOLO párrafo de 2-3 frases que capture la esencia más profunda de esta persona. Poético pero concreto, con una idea final que invite a descubrir más. Sin mencionar números. Sin títulos. Solo el párrafo. Pináculo: Día:${n.dd}, Mes:${n.mm}, Año:${n.ar}, Maestro:${n.d6}, Emocional:${n.d7}/${n.d8}, Ancla:${n.d9}, Destino:${n.d10}.`;
   Promise.all([llamarAPI(prompt,1500),llamarAPI(promptDestino,400),llamarAPI(promptSintesis,200)])
