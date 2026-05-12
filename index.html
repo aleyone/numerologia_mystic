@@ -444,250 +444,194 @@ function renderPDF(){
   const cleanMain=interpTextoMain.replace(/^#+\s*/gm,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/<[^>]+>/g,'').trim();
   const cleanDest=interpTextoDest.replace(/^#+\s*/gm,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/<[^>]+>/g,'').trim();
   const paras=cleanMain.split('\n').filter(p=>p.trim()).filter((p,i)=>{if(p.trim().length<80&&!p.trim().endsWith('.')&&!p.trim().endsWith(',')&&i<2)return false;return true;});
-  const masterHTML=maestros.length>0?`<div style="background:rgba(180,60,60,0.2);border:1px solid rgba(200,80,80,0.5);border-radius:24px;padding:8px 24px;text-align:center;margin:16px auto;width:fit-content;color:#E88080;font-size:14px;letter-spacing:1px;">${maestros.length>1?'Números maestros':'Número maestro'}: ${maestros.join(' · ')}</div>`:'';
-  const parasHTML=paras.map(p=>`<p style="margin-bottom:16px;line-height:1.8;font-size:15px;color:#E8E4FF;text-align:justify;">${p}</p>`).join('');
 
-  // Estilos compartidos
-  const BORDER_STYLE='1.5px solid rgba(201,168,76,0.5)';
+  // Estilos base
   const BG='linear-gradient(160deg,#0D1B2A 0%,#112236 50%,#0A1520 100%)';
-  const WRAP_STYLE=`position:fixed;left:-9999px;top:0;width:794px;font-family:Cormorant Garamond,Georgia,serif;color:#F0D898;box-sizing:border-box;background:${BG};`;
-  const INNER_STYLE=`border:${BORDER_STYLE};border-radius:12px;padding:40px;position:relative;min-height:100%;`;
-  const STAR=`<span style="position:absolute;color:#C9A84C;font-size:18px;">✦</span>`;
+  const WRAP_W=794;
+  const PAGE_H=1123; // A4 px a 96dpi
+  const PADDING=48;
+  const CONTENT_H=PAGE_H-(PADDING*2); // altura útil por página
+  const INNER_PAD=40;
+  const CONTENT_W=WRAP_W-(PADDING*2)-(INNER_PAD*2);
 
-  // Construir contenido completo en un div oculto para medir altura real
-  const measure=document.createElement('div');
-  measure.style.cssText=WRAP_STYLE+'visibility:hidden;';
-  measure.innerHTML=`<div style="${INNER_STYLE}">
-    ${STAR.replace('position:absolute','position:absolute;top:-10px;left:-10px')}
-    ${STAR.replace('position:absolute','position:absolute;top:-10px;right:-10px')}
-    ${STAR.replace('position:absolute','position:absolute;bottom:-10px;left:-10px')}
-    ${STAR.replace('position:absolute','position:absolute;bottom:-10px;right:-10px')}
-    <p style="text-align:center;font-size:12px;letter-spacing:4px;color:#C9A84C;margin-bottom:8px;">✦ NUMEROLOGÍA ESENCIAL ✦</p>
-    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.4);margin:8px 0 16px;">
-    <h1 style="text-align:center;font-weight:300;font-size:32px;color:#F0D898;margin-bottom:4px;">Tu Pináculo Numerológico</h1>
-    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.4);margin:12px 0 20px;">
-    <div style="background:rgba(234,232,245,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:20px;display:flex;justify-content:space-around;align-items:center;margin-bottom:20px;">
-      ${[['DÍA',n.dd],['MES',n.mm],['AÑO',n.ar]].map(([l,v])=>`<div style="text-align:center;"><div style="font-size:11px;letter-spacing:3px;color:rgba(201,168,76,0.6);margin-bottom:6px;">${l}</div><div style="font-size:64px;color:${isMaster(v)?'#E88080':'#C9A84C'};line-height:1;">${v}</div></div>`).join('<div style="font-size:32px;color:rgba(201,168,76,0.3);">·</div>')}
+  // HTML de bloques fijos (siempre en página 1)
+  const masterHTML=maestros.length>0?`<div class="pdf-master">
+    ${maestros.length>1?'Números maestros':'Número maestro'}: ${maestros.join(' · ')}
+  </div>`:'';
+
+  const fixedHTML=`
+    <p class="pdf-orn">✦ NUMEROLOGÍA ESENCIAL ✦</p>
+    <hr class="pdf-hr gold">
+    <h1 class="pdf-h1">Tu Pináculo Numerológico</h1>
+    <hr class="pdf-hr gold">
+    <div class="pdf-nums">
+      ${[['DÍA',n.dd],['MES',n.mm],['AÑO',n.ar]].map(([l,v])=>`
+        <div class="pdf-num-col">
+          <div class="pdf-num-label">${l}</div>
+          <div class="pdf-num-val" style="color:${isMaster(v)?'#E88080':'#C9A84C'}">${v}</div>
+        </div>`).join('<div class="pdf-dot">·</div>')}
     </div>
-    <div style="display:flex;justify-content:space-around;margin-bottom:16px;">
-      <div style="text-align:center;"><div style="font-size:10px;letter-spacing:2px;color:rgba(201,168,76,0.55);margin-bottom:4px;">EMOCIONALES</div><div style="font-size:36px;color:#E8E4FF;">${n.d7} · ${n.d8}</div></div>
-      <div style="text-align:center;"><div style="font-size:10px;letter-spacing:2px;color:rgba(201,168,76,0.55);margin-bottom:4px;">ANCLAJE</div><div style="font-size:36px;color:#E8E4FF;">${n.d9}</div></div>
+    <div class="pdf-emo">
+      <div class="pdf-emo-col">
+        <div class="pdf-emo-label">EMOCIONALES</div>
+        <div class="pdf-emo-val">${n.d7} · ${n.d8}</div>
+      </div>
+      <div class="pdf-emo-col">
+        <div class="pdf-emo-label">ANCLAJE</div>
+        <div class="pdf-emo-val">${n.d9}</div>
+      </div>
     </div>
-    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.3);margin:12px 0;">
+    <hr class="pdf-hr">
     ${masterHTML}
-    ${maestros.length>0?'<hr style="border:none;border-top:1px solid rgba(201,168,76,0.3);margin:12px 0;">':''}
-    <div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.4);border-radius:10px;padding:16px 24px;text-align:center;margin-bottom:20px;">
-      <div style="font-size:10px;letter-spacing:3px;color:rgba(201,168,76,0.6);margin-bottom:6px;">NÚMERO DE DESTINO</div>
-      <div style="font-size:72px;color:${isMaster(n.d10)?'#E88080':'#C9A84C'};line-height:1;">${n.d10}</div>
+    ${maestros.length>0?'<hr class="pdf-hr">':''}
+    <div class="pdf-destino">
+      <div class="pdf-destino-label">NÚMERO DE DESTINO</div>
+      <div class="pdf-destino-val" style="color:${isMaster(n.d10)?'#E88080':'#C9A84C'}">${n.d10}</div>
     </div>
-    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.3);margin:12px 0 20px;">
-    <div style="font-size:11px;letter-spacing:2px;color:#C9A84C;margin-bottom:12px;">✦ TU LECTURA NUMEROLÓGICA</div>
-    ${parasHTML}
-    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.3);margin:20px 0 16px;">
-    <div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:20px;">
-      <div style="font-size:10px;letter-spacing:3px;color:rgba(201,168,76,0.6);margin-bottom:10px;">NÚMERO DE DESTINO · ${n.d10}</div>
-      <p style="font-size:15px;line-height:1.8;color:#E8E4FF;font-style:italic;margin:0;">${cleanDest}</p>
+    <hr class="pdf-hr">
+    <div class="pdf-section-label">✦ TU LECTURA NUMEROLÓGICA</div>`;
+
+  const destinoTextoHTML=`
+    <hr class="pdf-hr">
+    <div class="pdf-destino-box">
+      <div class="pdf-destino-box-label">NÚMERO DE DESTINO · ${n.d10}</div>
+      <p class="pdf-destino-box-text">${cleanDest}</p>
     </div>
-    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.2);margin:24px 0 12px;">
-    <p style="text-align:center;font-size:11px;color:rgba(201,168,76,0.5);letter-spacing:1px;">David Gil · Numerología Esencial · numerologia-david-gil.vercel.app</p>
-  </div>`;
-  document.body.appendChild(measure);
+    <hr class="pdf-hr faint">
+    <p class="pdf-footer">David Gil · Numerología Esencial · numerologia-david-gil.vercel.app</p>`;
 
-  // A4 en px a 96dpi: 794x1123px. Con scale:2 => 1588x2246px
-  const PAGE_H_PX = 1050; // altura de contenido por página en px (sin padding)
-  const PADDING = 48;
-  const totalH = measure.scrollHeight;
-  document.body.removeChild(measure);
+  const CSS=`
+    <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Cormorant Garamond',Georgia,serif;color:#F0D898;background:${BG}}
+    .pdf-page{width:${WRAP_W}px;min-height:${PAGE_H}px;background:${BG};padding:${PADDING}px;position:relative;}
+    .pdf-inner{border:1.5px solid rgba(201,168,76,0.5);border-radius:12px;padding:${INNER_PAD}px;position:relative;min-height:${CONTENT_H}px;}
+    .pdf-star{position:absolute;color:#C9A84C;font-size:18px;line-height:1;}
+    .pdf-orn{text-align:center;font-size:12px;letter-spacing:4px;color:#C9A84C;margin-bottom:8px;}
+    .pdf-hr{border:none;border-top:1px solid rgba(201,168,76,0.35);margin:12px 0;}
+    .pdf-hr.gold{border-top-color:rgba(201,168,76,0.5);}
+    .pdf-hr.faint{border-top-color:rgba(201,168,76,0.2);}
+    .pdf-h1{text-align:center;font-weight:300;font-size:32px;color:#F0D898;margin-bottom:4px;}
+    .pdf-nums{display:flex;justify-content:space-around;align-items:center;background:rgba(234,232,245,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:16px;margin-bottom:14px;}
+    .pdf-num-col{text-align:center;}
+    .pdf-num-label{font-size:11px;letter-spacing:3px;color:rgba(201,168,76,0.6);margin-bottom:4px;}
+    .pdf-num-val{font-size:60px;line-height:1;}
+    .pdf-dot{font-size:28px;color:rgba(201,168,76,0.3);}
+    .pdf-emo{display:flex;justify-content:space-around;margin-bottom:12px;}
+    .pdf-emo-col{text-align:center;}
+    .pdf-emo-label{font-size:10px;letter-spacing:2px;color:rgba(201,168,76,0.55);margin-bottom:3px;}
+    .pdf-emo-val{font-size:34px;color:#E8E4FF;}
+    .pdf-master{background:rgba(180,60,60,0.2);border:1px solid rgba(200,80,80,0.5);border-radius:24px;padding:6px 24px;text-align:center;margin:10px auto;width:fit-content;color:#E88080;font-size:14px;letter-spacing:1px;}
+    .pdf-destino{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.4);border-radius:10px;padding:14px 24px;text-align:center;margin-bottom:14px;}
+    .pdf-destino-label{font-size:10px;letter-spacing:3px;color:rgba(201,168,76,0.6);margin-bottom:4px;}
+    .pdf-destino-val{font-size:68px;line-height:1;}
+    .pdf-section-label{font-size:11px;letter-spacing:2px;color:#C9A84C;margin-bottom:10px;}
+    .pdf-para{font-size:14px;line-height:1.8;color:#E8E4FF;text-align:justify;margin-bottom:14px;}
+    .pdf-destino-box{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:18px;}
+    .pdf-destino-box-label{font-size:10px;letter-spacing:3px;color:rgba(201,168,76,0.6);margin-bottom:8px;}
+    .pdf-destino-box-text{font-size:14px;line-height:1.8;color:#E8E4FF;font-style:italic;}
+    .pdf-footer{text-align:center;font-size:11px;color:rgba(201,168,76,0.5);letter-spacing:1px;margin-top:12px;}
+    .pdf-cont-label{font-size:11px;letter-spacing:2px;color:#C9A84C;margin-bottom:10px;opacity:0.7;}
+    </style>`;
 
-  // Número de páginas necesarias
-  const contentH = totalH - PADDING * 2;
-  const numPages = Math.ceil(contentH / PAGE_H_PX);
+  const STARS=`
+    <span class="pdf-star" style="top:-10px;left:-10px;">✦</span>
+    <span class="pdf-star" style="top:-10px;right:-10px;">✦</span>
+    <span class="pdf-star" style="bottom:-10px;left:-10px;">✦</span>
+    <span class="pdf-star" style="bottom:-10px;right:-10px;">✦</span>`;
 
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const imgW = 210;
-  const pageHmm = 297;
+  // Paso 1: medir altura de bloques fijos y cada párrafo individualmente
+  const measureDiv=document.createElement('div');
+  measureDiv.style.cssText=`position:fixed;left:-9999px;top:0;width:${WRAP_W}px;font-family:'Cormorant Garamond',Georgia,serif;`;
+  measureDiv.innerHTML=CSS+`<div class="pdf-page"><div class="pdf-inner">${fixedHTML}<div id="paras-measure">${paras.map((p,i)=>`<p class="pdf-para" id="pm${i}">${p}</p>`).join('')}${destinoTextoHTML}</div></div></div>`;
+  document.body.appendChild(measureDiv);
 
-  // Renderizar página por página
-  const renderPage = (pageIdx) => {
-    return new Promise((resolve) => {
-      const wrap = document.createElement('div');
-      wrap.style.cssText = WRAP_STYLE + `height:${PAGE_H_PX + PADDING*2}px;overflow:hidden;`;
+  // Medir altura del bloque fijo
+  const innerEl=measureDiv.querySelector('.pdf-inner');
+  const parseMeasureEl=measureDiv.querySelector('#paras-measure');
+  const fixedH=parseMeasureEl.getBoundingClientRect().top - innerEl.getBoundingClientRect().top;
 
-      const offsetY = pageIdx * PAGE_H_PX;
+  // Medir cada párrafo
+  const paraHeights=paras.map((_,i)=>{
+    const el=measureDiv.querySelector(`#pm${i}`);
+    return el?el.getBoundingClientRect().height+14:0; // +14 margin-bottom
+  });
 
-      wrap.innerHTML = `<div style="${INNER_STYLE}padding-top:${PADDING}px;padding-bottom:${PADDING}px;">
-        ${STAR.replace('position:absolute','position:absolute;top:-10px;left:-10px')}
-        ${STAR.replace('position:absolute','position:absolute;top:-10px;right:-10px')}
-        ${STAR.replace('position:absolute','position:absolute;bottom:-10px;left:-10px')}
-        ${STAR.replace('position:absolute','position:absolute;bottom:-10px;right:-10px')}
-        <div style="position:relative;margin-top:-${offsetY}px;">
-          ${pageIdx===0?`
-            <p style="text-align:center;font-size:12px;letter-spacing:4px;color:#C9A84C;margin-bottom:8px;">✦ NUMEROLOGÍA ESENCIAL ✦</p>
-            <hr style="border:none;border-top:1px solid rgba(201,168,76,0.4);margin:8px 0 16px;">
-            <h1 style="text-align:center;font-weight:300;font-size:32px;color:#F0D898;margin-bottom:4px;">Tu Pináculo Numerológico</h1>
-            <hr style="border:none;border-top:1px solid rgba(201,168,76,0.4);margin:12px 0 20px;">
-            <div style="background:rgba(234,232,245,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:20px;display:flex;justify-content:space-around;align-items:center;margin-bottom:20px;">
-              ${[['DÍA',n.dd],['MES',n.mm],['AÑO',n.ar]].map(([l,v])=>`<div style="text-align:center;"><div style="font-size:11px;letter-spacing:3px;color:rgba(201,168,76,0.6);margin-bottom:6px;">${l}</div><div style="font-size:64px;color:${isMaster(v)?'#E88080':'#C9A84C'};line-height:1;">${v}</div></div>`).join('<div style="font-size:32px;color:rgba(201,168,76,0.3);">·</div>')}
-            </div>
-            <div style="display:flex;justify-content:space-around;margin-bottom:16px;">
-              <div style="text-align:center;"><div style="font-size:10px;letter-spacing:2px;color:rgba(201,168,76,0.55);margin-bottom:4px;">EMOCIONALES</div><div style="font-size:36px;color:#E8E4FF;">${n.d7} · ${n.d8}</div></div>
-              <div style="text-align:center;"><div style="font-size:10px;letter-spacing:2px;color:rgba(201,168,76,0.55);margin-bottom:4px;">ANCLAJE</div><div style="font-size:36px;color:#E8E4FF;">${n.d9}</div></div>
-            </div>
-            <hr style="border:none;border-top:1px solid rgba(201,168,76,0.3);margin:12px 0;">
-            ${masterHTML}
-            ${maestros.length>0?'<hr style="border:none;border-top:1px solid rgba(201,168,76,0.3);margin:12px 0;">':''}
-            <div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.4);border-radius:10px;padding:16px 24px;text-align:center;margin-bottom:20px;">
-              <div style="font-size:10px;letter-spacing:3px;color:rgba(201,168,76,0.6);margin-bottom:6px;">NÚMERO DE DESTINO</div>
-              <div style="font-size:72px;color:${isMaster(n.d10)?'#E88080':'#C9A84C'};line-height:1;">${n.d10}</div>
-            </div>
-            <hr style="border:none;border-top:1px solid rgba(201,168,76,0.3);margin:12px 0 20px;">
-            <div style="font-size:11px;letter-spacing:2px;color:#C9A84C;margin-bottom:12px;">✦ TU LECTURA NUMEROLÓGICA</div>
-            ${parasHTML}
-            <hr style="border:none;border-top:1px solid rgba(201,168,76,0.3);margin:20px 0 16px;">
-            <div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:20px;">
-              <div style="font-size:10px;letter-spacing:3px;color:rgba(201,168,76,0.6);margin-bottom:10px;">NÚMERO DE DESTINO · ${n.d10}</div>
-              <p style="font-size:15px;line-height:1.8;color:#E8E4FF;font-style:italic;margin:0;">${cleanDest}</p>
-            </div>
-            <hr style="border:none;border-top:1px solid rgba(201,168,76,0.2);margin:24px 0 12px;">
-            <p style="text-align:center;font-size:11px;color:rgba(201,168,76,0.5);letter-spacing:1px;">David Gil · Numerología Esencial · numerologia-david-gil.vercel.app</p>
-          `:`
-            <div style="font-size:11px;letter-spacing:2px;color:#C9A84C;margin-bottom:12px;">✦ TU LECTURA NUMEROLÓGICA (continuación)</div>
-            ${parasHTML}
-            <hr style="border:none;border-top:1px solid rgba(201,168,76,0.3);margin:20px 0 16px;">
-            <div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:20px;">
-              <div style="font-size:10px;letter-spacing:3px;color:rgba(201,168,76,0.6);margin-bottom:10px;">NÚMERO DE DESTINO · ${n.d10}</div>
-              <p style="font-size:15px;line-height:1.8;color:#E8E4FF;font-style:italic;margin:0;">${cleanDest}</p>
-            </div>
-            <hr style="border:none;border-top:1px solid rgba(201,168,76,0.2);margin:24px 0 12px;">
-            <p style="text-align:center;font-size:11px;color:rgba(201,168,76,0.5);letter-spacing:1px;">David Gil · Numerología Esencial · numerologia-david-gil.vercel.app</p>
-          `}
-        </div>
-      </div>`;
+  // Medir bloque destino texto
+  const destBoxEl=measureDiv.querySelector('.pdf-destino-box');
+  const destFooterEl=measureDiv.querySelector('.pdf-footer');
+  const destHrEl=measureDiv.querySelector('.pdf-hr.faint');
+  const destSufH=(destBoxEl?destBoxEl.getBoundingClientRect().height:0)+
+                 (destFooterEl?destFooterEl.getBoundingClientRect().height+24:0)+
+                 30; // hr + margins
 
-      document.body.appendChild(wrap);
-      html2canvas(wrap,{scale:2,useCORS:true,backgroundColor:null,logging:false}).then(canvas=>{
-        document.body.removeChild(wrap);
-        resolve(canvas.toDataURL('image/jpeg',0.92));
-      });
+  document.body.removeChild(measureDiv);
+
+  // Paso 2: distribuir párrafos en páginas
+  const availP1=CONTENT_H-fixedH-destSufH-20; // espacio disponible en pág 1 para párrafos
+  const availP2=CONTENT_H-destSufH-40; // espacio disponible en pág 2+
+
+  const pages=[]; // array de arrays de índices de párrafos
+  let currentPage=[];
+  let currentH=0;
+  let isFirstPage=true;
+  let avail=availP1;
+
+  paras.forEach((p,i)=>{
+    const h=paraHeights[i];
+    if(currentH+h>avail && currentPage.length>0){
+      pages.push({paras:currentPage,isFirst:isFirstPage});
+      currentPage=[i];
+      currentH=h;
+      isFirstPage=false;
+      avail=availP2;
+    } else {
+      currentPage.push(i);
+      currentH+=h;
+    }
+  });
+  if(currentPage.length>0) pages.push({paras:currentPage,isFirst:isFirstPage});
+
+  // Si no hay páginas (sin texto), crear una vacía
+  if(pages.length===0) pages.push({paras:[],isFirst:true});
+
+  // Paso 3: renderizar cada página
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  let pageIdx=0;
+
+  const renderNextPage=()=>{
+    if(pageIdx>=pages.length){doc.save('mi-lectura-numerologica.pdf');return;}
+    const pg=pages[pageIdx];
+    const isLast=(pageIdx===pages.length-1);
+    const parasHTML=pg.paras.map(i=>`<p class="pdf-para">${paras[i]}</p>`).join('');
+
+    const wrap=document.createElement('div');
+    wrap.style.cssText=`position:fixed;left:-9999px;top:0;width:${WRAP_W}px;`;
+    wrap.innerHTML=CSS+`<div class="pdf-page">
+      <div class="pdf-inner">
+        ${STARS}
+        ${pg.isFirst?fixedHTML:`<div class="pdf-cont-label">✦ LECTURA NUMEROLÓGICA (continuación)</div>`}
+        ${parasHTML}
+        ${isLast?destinoTextoHTML:''}
+      </div>
+    </div>`;
+    document.body.appendChild(wrap);
+
+    html2canvas(wrap.querySelector('.pdf-page'),{
+      scale:2,useCORS:true,backgroundColor:null,logging:false
+    }).then(canvas=>{
+      document.body.removeChild(wrap);
+      if(pageIdx>0) doc.addPage();
+      doc.addImage(canvas.toDataURL('image/jpeg',0.93),'JPEG',0,0,210,297);
+      pageIdx++;
+      renderNextPage();
+    }).catch(err=>{
+      console.error('PDF page error:',err);
+      document.body.removeChild(wrap);
     });
   };
 
-  // Enfoque simplificado: renderizar todo en un solo canvas pero dividir en páginas con marco
-  const wrapFull = document.createElement('div');
-  wrapFull.style.cssText = WRAP_STYLE;
-  wrapFull.innerHTML = `<div style="${INNER_STYLE}">
-    ${STAR.replace('position:absolute','position:absolute;top:-10px;left:-10px')}
-    ${STAR.replace('position:absolute','position:absolute;top:-10px;right:-10px')}
-    ${STAR.replace('position:absolute','position:absolute;bottom:-10px;left:-10px')}
-    ${STAR.replace('position:absolute','position:absolute;bottom:-10px;right:-10px')}
-    <p style="text-align:center;font-size:12px;letter-spacing:4px;color:#C9A84C;margin-bottom:8px;">✦ NUMEROLOGÍA ESENCIAL ✦</p>
-    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.4);margin:8px 0 16px;">
-    <h1 style="text-align:center;font-weight:300;font-size:32px;color:#F0D898;margin-bottom:4px;">Tu Pináculo Numerológico</h1>
-    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.4);margin:12px 0 20px;">
-    <div style="background:rgba(234,232,245,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:20px;display:flex;justify-content:space-around;align-items:center;margin-bottom:20px;">
-      ${[['DÍA',n.dd],['MES',n.mm],['AÑO',n.ar]].map(([l,v])=>`<div style="text-align:center;"><div style="font-size:11px;letter-spacing:3px;color:rgba(201,168,76,0.6);margin-bottom:6px;">${l}</div><div style="font-size:64px;color:${isMaster(v)?'#E88080':'#C9A84C'};line-height:1;">${v}</div></div>`).join('<div style="font-size:32px;color:rgba(201,168,76,0.3);">·</div>')}
-    </div>
-    <div style="display:flex;justify-content:space-around;margin-bottom:16px;">
-      <div style="text-align:center;"><div style="font-size:10px;letter-spacing:2px;color:rgba(201,168,76,0.55);margin-bottom:4px;">EMOCIONALES</div><div style="font-size:36px;color:#E8E4FF;">${n.d7} · ${n.d8}</div></div>
-      <div style="text-align:center;"><div style="font-size:10px;letter-spacing:2px;color:rgba(201,168,76,0.55);margin-bottom:4px;">ANCLAJE</div><div style="font-size:36px;color:#E8E4FF;">${n.d9}</div></div>
-    </div>
-    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.3);margin:12px 0;">
-    ${masterHTML}
-    ${maestros.length>0?'<hr style="border:none;border-top:1px solid rgba(201,168,76,0.3);margin:12px 0;">':''}
-    <div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.4);border-radius:10px;padding:16px 24px;text-align:center;margin-bottom:20px;">
-      <div style="font-size:10px;letter-spacing:3px;color:rgba(201,168,76,0.6);margin-bottom:6px;">NÚMERO DE DESTINO</div>
-      <div style="font-size:72px;color:${isMaster(n.d10)?'#E88080':'#C9A84C'};line-height:1;">${n.d10}</div>
-    </div>
-    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.3);margin:12px 0 20px;">
-    <div style="font-size:11px;letter-spacing:2px;color:#C9A84C;margin-bottom:12px;">✦ TU LECTURA NUMEROLÓGICA</div>
-    ${parasHTML}
-    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.3);margin:20px 0 16px;">
-    <div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:20px;">
-      <div style="font-size:10px;letter-spacing:3px;color:rgba(201,168,76,0.6);margin-bottom:10px;">NÚMERO DE DESTINO · ${n.d10}</div>
-      <p style="font-size:15px;line-height:1.8;color:#E8E4FF;font-style:italic;margin:0;">${cleanDest}</p>
-    </div>
-    <hr style="border:none;border-top:1px solid rgba(201,168,76,0.2);margin:24px 0 12px;">
-    <p style="text-align:center;font-size:11px;color:rgba(201,168,76,0.5);letter-spacing:1px;">David Gil · Numerología Esencial · numerologia-david-gil.vercel.app</p>
-  </div>`;
-
-  document.body.appendChild(wrapFull);
-
-  html2canvas(wrapFull,{scale:2,useCORS:true,backgroundColor:null,logging:false}).then(fullCanvas=>{
-    document.body.removeChild(wrapFull);
-
-    const scale = 2;
-    const pageWpx = fullCanvas.width;
-    const pageHpx = Math.round(fullCanvas.height * (297/210)); // A4 ratio
-    const pageHcanvas = Math.round(pageWpx * (297/210));
-    const numPages = Math.ceil(fullCanvas.height / pageHcanvas);
-    const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-
-    for(let p=0; p<numPages; p++){
-      if(p>0) doc.addPage();
-
-      // Crear canvas para esta página con marco
-      const pageCanvas = document.createElement('canvas');
-      pageCanvas.width = pageWpx;
-      pageCanvas.height = pageHcanvas;
-      const ctx = pageCanvas.getContext('2d');
-
-      // Fondo azul noche
-      const grad = ctx.createLinearGradient(0,0,0,pageHcanvas);
-      grad.addColorStop(0,'#0D1B2A');
-      grad.addColorStop(0.5,'#112236');
-      grad.addColorStop(1,'#0A1520');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0,0,pageWpx,pageHcanvas);
-
-      // Copiar franja del canvas completo
-      const srcY = p * pageHcanvas;
-      const srcH = Math.min(pageHcanvas, fullCanvas.height - srcY);
-      ctx.drawImage(fullCanvas, 0, srcY, pageWpx, srcH, 0, 0, pageWpx, srcH);
-
-      // Dibujar marco dorado encima
-      const M = 20 * scale;
-      ctx.strokeStyle = 'rgba(201,168,76,0.55)';
-      ctx.lineWidth = 3;
-      // Marco exterior redondeado
-      const r = 16 * scale;
-      ctx.beginPath();
-      ctx.moveTo(M+r,M); ctx.lineTo(pageWpx-M-r,M); ctx.arcTo(pageWpx-M,M,pageWpx-M,M+r,r);
-      ctx.lineTo(pageWpx-M,pageHcanvas-M-r); ctx.arcTo(pageWpx-M,pageHcanvas-M,pageWpx-M-r,pageHcanvas-M,r);
-      ctx.lineTo(M+r,pageHcanvas-M); ctx.arcTo(M,pageHcanvas-M,M,pageHcanvas-M-r,r);
-      ctx.lineTo(M,M+r); ctx.arcTo(M,M,M+r,M,r);
-      ctx.closePath(); ctx.stroke();
-
-      // Marco interior fino
-      const M2 = 28 * scale;
-      ctx.strokeStyle = 'rgba(201,168,76,0.2)';
-      ctx.lineWidth = 1.5;
-      const r2 = 10 * scale;
-      ctx.beginPath();
-      ctx.moveTo(M2+r2,M2); ctx.lineTo(pageWpx-M2-r2,M2); ctx.arcTo(pageWpx-M2,M2,pageWpx-M2,M2+r2,r2);
-      ctx.lineTo(pageWpx-M2,pageHcanvas-M2-r2); ctx.arcTo(pageWpx-M2,pageHcanvas-M2,pageWpx-M2-r2,pageHcanvas-M2,r2);
-      ctx.lineTo(M2+r2,pageHcanvas-M2); ctx.arcTo(M2,pageHcanvas-M2,M2,pageHcanvas-M2-r2,r2);
-      ctx.lineTo(M2,M2+r2); ctx.arcTo(M2,M2,M2+r2,M2,r2);
-      ctx.closePath(); ctx.stroke();
-
-      // Estrellas en las 4 esquinas
-      ctx.fillStyle = '#C9A84C';
-      ctx.font = `${18*scale}px Georgia,serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('✦', M, M);
-      ctx.fillText('✦', pageWpx-M, M);
-      ctx.fillText('✦', M, pageHcanvas-M);
-      ctx.fillText('✦', pageWpx-M, pageHcanvas-M);
-
-      // Añadir al PDF
-      doc.addImage(pageCanvas.toDataURL('image/jpeg',0.92),'JPEG',0,0,210,297);
-    }
-
-    doc.save('mi-lectura-numerologica.pdf');
-  }).catch(err=>{
-    console.error('PDF error:',err);
-    document.body.removeChild(wrapFull);
-  });
+  renderNextPage();
 }
 
 
