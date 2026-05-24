@@ -117,6 +117,33 @@ svg.pinacle{width:100%;height:auto;overflow:visible;-webkit-user-select:none;use
 .form-success-icon{font-size:2.5rem;margin-bottom:0.75rem;}
 .form-success-text{font-family:"Cormorant Garamond",serif;font-size:1.2rem;color:var(--deep);margin-bottom:0.4rem;}
 .form-success-sub{font-size:0.82rem;color:var(--muted);}
+
+.ponencia-overlay{display:none;position:fixed;inset:0;background:rgba(10,15,30,0.75);z-index:2000;align-items:flex-end;justify-content:center;}
+.ponencia-overlay.visible{display:flex;}
+.ponencia-modal{
+  background:linear-gradient(170deg,#1A1F3A 0%,#0D1525 60%,#0A1020 100%);
+  border:1px solid rgba(201,168,76,0.45);
+  border-radius:20px 20px 0 0;
+  width:100%;max-width:480px;
+  padding:2rem 1.5rem 2rem;
+  position:relative;
+  transform:translateY(100%);
+  transition:transform 0.5s cubic-bezier(0.32,0.72,0,1);
+}
+.ponencia-overlay.visible .ponencia-modal{transform:translateY(0);}
+.ponencia-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.08);border:none;color:rgba(201,168,76,0.7);font-size:1.1rem;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.ponencia-close:hover{background:rgba(201,168,76,0.15);}
+
+.ponencia-evento{text-align:center;font-size:0.68rem;letter-spacing:3px;color:rgba(201,168,76,0.6);text-transform:uppercase;margin-bottom:0.5rem;}
+.ponencia-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:#F0D898;text-align:center;line-height:1.2;margin-bottom:0.4rem;}
+.ponencia-date{text-align:center;font-size:0.78rem;color:rgba(201,168,76,0.75);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:1rem;}
+.ponencia-sep{border:none;border-top:1px solid rgba(201,168,76,0.2);margin:0.85rem 0;}
+.ponencia-info{font-size:0.82rem;color:#B8C0D8;line-height:1.6;text-align:center;margin-bottom:1rem;}
+.ponencia-info strong{color:#F0D898;}
+.ponencia-btns{display:flex;flex-direction:column;gap:0.6rem;}
+.ponencia-btn-primary{display:block;width:100%;padding:0.75rem;background:linear-gradient(135deg,#C9A84C,#A8832A);color:#0A1020;border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:600;text-align:center;text-decoration:none;letter-spacing:0.5px;cursor:pointer;}
+.ponencia-btn-secondary{display:block;width:100%;padding:0.7rem;background:transparent;color:rgba(201,168,76,0.85);border:1px solid rgba(201,168,76,0.4);border-radius:10px;font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;text-align:center;text-decoration:none;cursor:pointer;}
+.ponencia-note{font-size:0.7rem;color:rgba(184,192,216,0.6);text-align:center;margin-top:0.75rem;line-height:1.5;}
 .stars-deco{text-align:center;color:var(--gold);font-size:10px;letter-spacing:6px;margin:1rem 0 0;opacity:0.7}
 footer{text-align:center;padding:1rem;font-size:0.72rem;color:var(--muted);letter-spacing:1px}
 </style>
@@ -141,7 +168,7 @@ footer{text-align:center;padding:1rem;font-size:0.72rem;color:var(--muted);lette
     </div>
     <div class="formacion-card" onclick="abrirFormacion()">
       <span class="formacion-ornament">✦ Próxima formación ✦</span>
-      <p class="formacion-title">NUMEROLOGÍA: Compatibilidad Numérica</p>
+      <p class="formacion-title">NUMEROLOGÍA<br><span style="font-size:1.1rem;">Compatibilidad Numérica</span></p>
       <p class="formacion-date">Domingo 7 de junio · 10:00 a 14:00h</p>
       <span class="formacion-cta">Para más información →</span>
     </div>
@@ -218,7 +245,7 @@ footer{text-align:center;padding:1rem;font-size:0.72rem;color:var(--muted);lette
     </div>
     <div class="formacion-card" onclick="abrirFormacion()">
       <span class="formacion-ornament">✦ Próxima formación ✦</span>
-      <p class="formacion-title">NUMEROLOGÍA: Compatibilidad Numérica</p>
+      <p class="formacion-title">NUMEROLOGÍA<br><span style="font-size:1.1rem;">Compatibilidad Numérica</span></p>
       <p class="formacion-date">Domingo 7 de junio · 10:00 a 14:00h</p>
       <span class="formacion-cta">Para más información →</span>
     </div>
@@ -294,6 +321,25 @@ footer{text-align:center;padding:1rem;font-size:0.72rem;color:var(--muted);lette
         <p class="form-success-sub">Me pondré en contacto contigo pronto.</p>
       </div>
     </div>
+  </div>
+</div>
+<div class="ponencia-overlay" id="ponencia-overlay">
+  <div class="ponencia-modal">
+    <button class="ponencia-close" onclick="cerrarPonencia()">✕</button>
+    <p class="ponencia-evento">✦ Mystic Valencia · Evento ✦</p>
+    <h2 class="ponencia-title">Numerología y<br>Números Maestros</h2>
+    <p class="ponencia-date">Sábado 30 de mayo · 18:30 - 19:30h</p>
+    <hr class="ponencia-sep"/>
+    <p class="ponencia-info">
+      <strong>Ponencia gratuita</strong> con entrada al recinto.<br>
+      Hotel Senator Parque Central · Valencia<br><br>
+      Con tu entrada al evento puedes reservar plaza en esta y otras ponencias gratuitas <strong>hasta completar aforo</strong>.
+    </p>
+    <div class="ponencia-btns">
+      <a href="https://mysticvalencia.com/producto/sabado-numeros-maestros-1830-1930/" target="_blank" class="ponencia-btn-primary">✦ Reservar plaza en la ponencia</a>
+      <a href="https://mysticvalencia.com/categoria-producto/entradas/" target="_blank" class="ponencia-btn-secondary">Comprar entrada al evento →</a>
+    </div>
+    <p class="ponencia-note">La reserva de ponencia requiere entrada al recinto.<br>Accede a <a href="https://www.mysticvalencia.com" target="_blank" style="color:rgba(201,168,76,0.6);">mysticvalencia.com</a> para más información.</p>
   </div>
 </div>
 <div class="tooltip" id="tooltip"><strong id="tooltip-num"></strong><span id="tooltip-desc"></span></div>
@@ -691,6 +737,19 @@ function enviarConEmailJS(nombre,apellidos,email,telefono,btn){
     alert('No se pudo enviar. Inténtalo de nuevo.');
   });
 }
+
+// Modal ponencia
+const PONENCIA_VISIBLE = true; // cambiar a false para desactivar sin romper el diseño
+function mostrarPonencia(){
+  if(!PONENCIA_VISIBLE) return;
+  if(sessionStorage.getItem('ponencia_cerrada')) return;
+  setTimeout(()=>{document.getElementById('ponencia-overlay').classList.add('visible');},1000);
+}
+function cerrarPonencia(){
+  document.getElementById('ponencia-overlay').classList.remove('visible');
+  sessionStorage.setItem('ponencia_cerrada','1');
+}
+document.addEventListener('DOMContentLoaded', mostrarPonencia);
 </script>
 </body>
 </html>
